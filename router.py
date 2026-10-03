@@ -125,8 +125,10 @@ def jev(request, catalogue, api_key, model=MODEL):
             return api_review("api_model_mismatch")
         if answer["type"] != "choice" or not isinstance(probabilities, dict) or set(probabilities) != set(criteria):
             raise ValueError("unexpected type or options")
-        if not all(type(p) in (int, float) and math.isfinite(p) and 0 <= p <= 1 for p in probabilities.values()) or abs(sum(probabilities.values()) - 1) > 0.001:
+        if not all(type(p) in (int, float) and math.isfinite(p) and 0 <= p <= 1 for p in probabilities.values()) or abs(sum(probabilities.values()) - 1) > 0.02:
             raise ValueError("invalid distribution")
+        total = sum(probabilities.values())
+        probabilities = {key: value / total for key, value in probabilities.items()}
         if choice not in probabilities or probabilities[choice] < max(probabilities.values()) - 1e-9 or type(confidence) not in (int, float) or not math.isfinite(confidence) or not 0 <= confidence <= 1:
             raise ValueError("invalid choice or confidence")
         if usage is not None and (not isinstance(usage, dict) or any(type(usage.get(k)) is not int or usage[k] < 0 for k in ("input_tokens", "output_tokens"))):

@@ -149,6 +149,16 @@ class RouterTests(unittest.TestCase):
         self.assertEqual((answer["outcome"], answer["reason"], answer["usage"]["requests"]),
                          ("review", "api_unavailable", 1))
 
+    def test_rounded_distribution_is_normalized_without_silencing_invalid_data(self):
+        with local_api(choice_response(skill="__review__", probability=0.99)):
+            answer = route("Handle two unrelated tasks", CATALOGUE, api_key="fake-test-key")
+        self.assertEqual((answer["outcome"], answer["source"], answer["reason"]),
+                         ("review", "jev", "model_choice"))
+        self.assertAlmostEqual(sum(answer["probabilities"].values()), 1.0)
+        with local_api(choice_response(probability=0.94)):
+            invalid = route("Fix the Dockerfile image build", CATALOGUE, api_key="fake-test-key")
+        self.assertEqual((invalid["outcome"], invalid["reason"]), ("review", "api_invalid_response"))
+
     def test_invalid_catalogue_and_case_are_rejected(self):
         with self.assertRaisesRegex(InputError, "duplicate"):
             catalogue_from(CATALOGUE + [CATALOGUE[0]])
