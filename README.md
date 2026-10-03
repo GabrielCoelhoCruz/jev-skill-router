@@ -3,6 +3,7 @@
 Choose a specialist workflow for a request without loading or executing a skill. This Python 3.11+ command-line tool uses a declarative catalogue with an `id`, a `description`, and short `examples` for each skill. It returns `route` with a skill ID, `no_skill`, `review`, or `invalid` for rejected CLI input. A route is a recommendation, never permission to execute the skill.
 
 With `TYPESAFE_API_KEY` in the process environment, the router sends the request and catalogue descriptions to [TypeSafe Jev](https://docs.typesafe.ai/api.md). A missing key, failed request, mismatched model, or invalid response produces `review`, rather than a lexical route. `--dry-run` is a separate, network-free lexical baseline, even when a key is set. The `source` and `reason` fields explain the decision. Jev probabilities represent option mass, and `confidence` is a concentration value. Neither is calibrated correctness. Dry-run scores are normalized for display and are not model probabilities.
+The router accepts a Jev probability sum within 0.02 of one and normalizes the returned distribution. This handles small rounding errors; larger schema errors still require review.
 
 The router accepts a Jev probability sum within 0.02 of one and normalizes the returned distribution. This handles small rounding errors; larger schema errors still require review.
 
