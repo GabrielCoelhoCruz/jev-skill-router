@@ -15,6 +15,8 @@ DATA = ROOT / "benchmark"
 DATASET_SHA = "a1fd9b23e3ee2af166b25a15ea41f8163c8717c9bfa638b5ab2acb531e11f2ad"
 METADATA_SHA = "f11a293ba5801a4365f8ad8e81faf611f89643226bd1a0c87c60e7e36a2c1302"
 ORDINARY_SHA = "ba59acfeb36855413cd02d050a56e18fa1636810f7875a29d70a0bc8a0bc834e"
+LIVE_SHA = "26cac21dc7a98b3dba9d2d62dd3c3c0c6e805e8fa54c1efb4cb7c7738b4e0d34"
+ORDINARY_RESULTS_SHA = "9c89fb052f9bad2a84efa488a6b50f7ff4376ee67358ee95bd229cb303e2a261"
 CATALOGUE_SHA = "84ea9cfdd29789ae79434f330b5cbc96c8d9c8c4df4022a2924b3cf40e5bf4ac"
 ROUTER_SHA = "cff71463063cfc572f935feaf67fb03e5cc30d9469f25c59cbcf08d0cdc5eee2"
 CONFIG_SHA = "cc8a66f9cc67043e400b1edd62fb7a23efd8dca209c4bd26c76e72412a4882df"
@@ -35,22 +37,32 @@ def rows(path):
 def verify(observations, cases, labels, repeats):
     expected = {(case["id"], repeat) for repeat in range(1, repeats + 1) for case in cases}
     keys = [(item.get("id"), item.get("repeat")) for item in observations]
-    if len(observations) != len(expected) or len(set(keys)) != len(keys) or set(keys) != expected:
+    if (len(observations) != len(expected) or any(type(item.get("repeat")) is not int for item in observations)
+            or len(set(keys)) != len(keys) or set(keys) != expected):
         raise InputError("observations must match every planned id and repeat exactly once")
     if len({case["id"] for case in cases}) != len(cases):
         raise InputError("duplicate case id")
     known = set(labels) | {"__no_skill__", "__review__"}
     for row in observations:
+        if set(row) != {"id", "repeat", "decision", "latency_ms"}:
+            raise InputError("unexpected observation fields")
         decision = row.get("decision")
-        if not isinstance(decision, dict) or not isinstance(row.get("latency_ms"), (float, int)) or not math.isfinite(row["latency_ms"]) or row["latency_ms"] < 0:
+        if not isinstance(decision, dict) or type(row.get("latency_ms")) not in (float, int) or not math.isfinite(row["latency_ms"]) or row["latency_ms"] < 0:
             raise InputError("invalid recorded decision or latency")
+        if set(decision) != {"outcome", "skill_id", "probabilities", "confidence", "source", "reason", "usage"}:
+            raise InputError("unexpected decision fields")
         usage = decision.get("usage")
-        if not isinstance(usage, dict) or usage.get("requests") != 1 or type(usage["requests"]) is not int:
+        if not isinstance(usage, dict) or set(usage) != {"requests", "input_tokens", "output_tokens", "estimated_input_usd"} or usage.get("requests") != 1 or type(usage["requests"]) is not int:
             raise InputError("each observation must record exactly one API attempt")
         for field in ("input_tokens", "output_tokens"):
             value = usage.get(field)
             if value is not None and (type(value) is not int or value < 0):
                 raise InputError("invalid token usage")
+        expected_cost = (round(usage["input_tokens"] * INPUT_USD_PER_MILLION / 1_000_000, 12)
+                         if usage["input_tokens"] is not None else None)
+        if (usage["estimated_input_usd"] is not None and
+                (type(usage["estimated_input_usd"]) not in (int, float) or not math.isfinite(usage["estimated_input_usd"]))) or usage["estimated_input_usd"] != expected_cost:
+            raise InputError("recorded input estimate contradicts usage")
         source, reason = decision.get("source"), decision.get("reason")
         action = decision.get("skill_id") if decision.get("outcome") == "route" else decision.get("outcome")
         if source == "api":
@@ -58,6 +70,8 @@ def verify(observations, cases, labels, repeats):
                 raise InputError("unknown API failure reason")
             if action != "review" or decision.get("skill_id") is not None or decision.get("confidence") is not None or decision.get("probabilities") != {}:
                 raise InputError("API errors must remain unscored review decisions")
+            if usage["input_tokens"] is not None or usage["output_tokens"] is not None:
+                raise InputError("failed API response cannot report successful token usage")
         elif source == "jev":
             if reason not in ("model_choice", "uncertain") or action not in labels | {"no_skill", "review"}:
                 raise InputError("invalid Jev decision")
@@ -69,8 +83,17 @@ def verify(observations, cases, labels, repeats):
                 raise InputError("invalid recorded probability distribution")
             if (decision.get("outcome") == "route") != (decision.get("skill_id") in labels) or (decision.get("outcome") == "no_skill" and decision.get("skill_id") is not None) or (decision.get("outcome") == "review" and decision.get("skill_id") is not None):
                 raise InputError("invalid route skill")
+            maximum = max(p.values())
+            if reason == "model_choice":
+                choice = decision["skill_id"] if action not in ("no_skill", "review") else "__" + action + "__"
+                if p[choice] < maximum - 1e-9 or (action not in ("no_skill", "review") and
+                                                  (confidence < 0.55 or p[choice] < 0.55)):
+                    raise InputError("recorded choice contradicts frozen router policy")
+            elif action != "review" or not any(p[skill] >= maximum - 1e-9 and
+                                                (confidence < 0.55 or p[skill] < 0.55) for skill in labels):
+                raise InputError("uncertain review contradicts frozen router policy")
         else:
-            raise InputError("record must come from one Jev API attempt")
+            raise InputError("record must declare a Jev or API error decision")
 
 
 def score(observations, cases):
@@ -124,6 +147,10 @@ def replay(live_path, ordinary_path):
             or any(c["expected"] not in labels | {"review"} for c in cases)
             or any(c["expected"] != "no_skill" for c in ordinary)):
         raise InputError("pinned dataset or family inventory is invalid")
+    if live_path.resolve() == (DATA / "live-360.jsonl").resolve():
+        read_pinned(live_path, LIVE_SHA)
+    if ordinary_path.resolve() == (DATA / "ordinary-6-results.jsonl").resolve():
+        read_pinned(ordinary_path, ORDINARY_RESULTS_SHA)
     live, sanity = rows(live_path), rows(ordinary_path)
     verify(live, cases, labels, 3)
     verify(sanity, ordinary, labels, 1)
