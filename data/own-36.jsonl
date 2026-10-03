@@ -1,0 +1,36 @@
+{"id":"o01","request":"Pull the tables from this scanned lease PDF and tell me which page each came from.","expected":"pdf-extraction"}
+{"id":"o02","request":"Transcribe searchable text from these PDF pages while retaining the original page numbers.","expected":"pdf-extraction"}
+{"id":"o03","request":"This worker emitted a stack trace and stopped; identify the likely exception from its logs.","expected":"log-diagnosis"}
+{"id":"o04","request":"Find the failure cause in these timestamped application events, not a general outage plan.","expected":"log-diagnosis"}
+{"id":"o05","request":"Customers cannot pay right now. Coordinate containment and a public status update.","expected":"incident-triage"}
+{"id":"o06","request":"Our live API outage affects checkout. Organize responders and assess customer impact.","expected":"incident-triage"}
+{"id":"o07","request":"Use this EXPLAIN ANALYZE plan to speed up the SELECT without changing its results.","expected":"sql-tuning"}
+{"id":"o08","request":"The join is slow on a large orders table; suggest an index and query rewrite.","expected":"sql-tuning"}
+{"id":"o09","request":"Design a reversible migration to split the address column into street and city.","expected":"schema-migration"}
+{"id":"o10","request":"Plan a backfill after adding a non-null database field, with a rollback path.","expected":"schema-migration"}
+{"id":"o11","request":"The Docker image fails during its second build stage. Repair the Dockerfile.","expected":"container-build"}
+{"id":"o12","request":"Make this container start with the right entrypoint and shrink its image size.","expected":"container-build"}
+{"id":"o13","request":"Fix the GitHub Actions workflow so the build job runs on both Linux and Windows.","expected":"ci-workflow"}
+{"id":"o14","request":"Update our pipeline YAML to cache dependencies before the test job.","expected":"ci-workflow"}
+{"id":"o15","request":"Write unit tests for the URL parser's handling of escaped characters.","expected":"code-tests"}
+{"id":"o16","request":"Repair the failing integration test assertions for the login endpoint.","expected":"code-tests"}
+{"id":"o17","request":"Audit this registration form for screen-reader labels and keyboard focus order.","expected":"accessibility-audit"}
+{"id":"o18","request":"Check the page's colour contrast and tab navigation against accessibility requirements.","expected":"accessibility-audit"}
+{"id":"o19","request":"Rework the CSS grid so cards fit narrow mobile screens without overflow.","expected":"web-layout"}
+{"id":"o20","request":"Implement the responsive layout in this existing HTML page and adjust spacing.","expected":"web-layout"}
+{"id":"o21","request":"Standardize empty values and remove duplicate records from the CSV export.","expected":"data-cleaning"}
+{"id":"o22","request":"Clean these inconsistent table columns and malformed rows before analysis.","expected":"data-cleaning"}
+{"id":"o23","request":"Plot quarterly revenue by region as a chart with labelled axes.","expected":"data-charting"}
+{"id":"o24","request":"Turn the prepared dataset into a visual comparison of monthly counts.","expected":"data-charting"}
+{"id":"o25","request":"What is two plus seven?","expected":"no_skill"}
+{"id":"o26","request":"Hello. How are you?","expected":"no_skill"}
+{"id":"o27","request":"Explain what a database index means in one sentence.","expected":"no_skill"}
+{"id":"o28","request":"Translate 'good morning' into French.","expected":"no_skill"}
+{"id":"o29","request":"Thanks, that answers my question.","expected":"no_skill"}
+{"id":"o30","request":"Summarize the difference between a PDF and an HTML file in plain English.","expected":"no_skill"}
+{"id":"o31","request":"Do something useful with this repository.","expected":"review"}
+{"id":"o32","request":"Either restructure the SQL schema or tune the existing query; I have not decided which.","expected":"review"}
+{"id":"o33","request":"Edit the audio recording to remove background noise.","expected":"review"}
+{"id":"o34","request":"I uploaded some data. What should we do with it?","expected":"review"}
+{"id":"o35","request":"Write tests and redesign the interface; both jobs matter equally today.","expected":"review"}
+{"id":"o36","request":"Please provision a cloud server for me immediately.","expected":"review"}

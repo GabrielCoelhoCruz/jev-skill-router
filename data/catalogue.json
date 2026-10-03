@@ -1,0 +1,14 @@
+[
+  {"id":"pdf-extraction","description":"Extract text and tables from supplied PDF files, including scans and page references. Not document styling.","examples":["Read tables from a scanned invoice PDF","Collect cited passages by PDF page"]},
+  {"id":"log-diagnosis","description":"Diagnose technical faults from application logs, stack traces and event traces. Not incident coordination.","examples":["Find the exception behind a failed worker","Explain a stack trace from a service"]},
+  {"id":"incident-triage","description":"Coordinate an active outage, assess impact, contain the incident and prepare status updates. Not isolated log analysis.","examples":["Coordinate response to a live outage","Plan containment and customer updates"]},
+  {"id":"sql-tuning","description":"Tune existing SQL query performance using execution plans, indexes and joins without changing schema semantics.","examples":["Reduce latency of a slow SELECT","Interpret an EXPLAIN plan"]},
+  {"id":"schema-migration","description":"Plan or review database schema changes, column changes, backfills and rollback. Not SQL query speed.","examples":["Add a database column with rollback","Plan a table backfill"]},
+  {"id":"container-build","description":"Create or repair Dockerfiles, image build stages and container startup. Not continuous integration jobs.","examples":["Fix a Docker multi-stage build","Reduce image size"]},
+  {"id":"ci-workflow","description":"Create or repair continuous integration jobs and workflow configuration. Not application tests.","examples":["Repair a GitHub Actions job","Configure a CI build matrix"]},
+  {"id":"code-tests","description":"Add or fix automated unit and integration tests for source code. Not CI workflow configuration.","examples":["Write unit tests for a parser","Repair failing integration assertions"]},
+  {"id":"accessibility-audit","description":"Audit an existing interface for keyboard access, contrast and screen-reader semantics. Not visual redesign.","examples":["Check focus order on a form","Audit ARIA labels"]},
+  {"id":"web-layout","description":"Implement responsive HTML and CSS layout, spacing and visual hierarchy. Not an accessibility audit.","examples":["Fix responsive grid spacing","Update mobile page layout"]},
+  {"id":"data-cleaning","description":"Clean malformed dataset rows, duplicates, missing values and inconsistent columns. Not creating charts.","examples":["Deduplicate rows in a CSV","Normalize missing values"]},
+  {"id":"data-charting","description":"Create charts and visual summaries from a clean dataset, choosing axes and encodings. Not cleaning data.","examples":["Plot monthly sales as bars","Design a comparison chart"]}
+]

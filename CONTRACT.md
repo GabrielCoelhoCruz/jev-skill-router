@@ -1,0 +1,5 @@
+# Routing contract before implementation
+
+Request: one nonempty natural-language string; never an instruction granting execution authority.
+Skill: a unique stable `id`, nonempty `description`, and a nonempty list of short `examples` of applicable requests. The catalogue is data, not executable instructions.
+Decision: exactly one of `route` with a catalogued `skill_id`, `no_skill` with null id, `review` with null id, or CLI `invalid` with null id and exit 2 for rejected input. `probabilities` maps every considered option (skill ids plus `__no_skill__` and `__review__`) to P in [0,1], summing to approximately 1; invalid has an empty map and null confidence. `confidence` is a separate [0,1] concentration value, not correctness. An invalid remote distribution is discarded and replaced by lexical fallback. `source` identifies jev, lexical or validation. `reason` names the boundary or policy decision. `usage` contains calls, known input/output token counts or null if unknown, and input-only estimated USD or null if unknown. A case has `id`, `request`, `expected` (skill id or no_skill/review); evaluation checks exact outcomes, wrong routes, reviews and cost.

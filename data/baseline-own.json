@@ -1,0 +1,1279 @@
+{
+  "summary": {
+    "cases": 36,
+    "correct": 27,
+    "accuracy": 0.75,
+    "wrong_routes": 1,
+    "reviews": 7,
+    "unnecessary_reviews": 5,
+    "fallbacks": 36,
+    "api_requests": 0,
+    "known_input_tokens": 0,
+    "known_output_tokens": 0,
+    "token_usage_complete": true,
+    "estimated_input_usd": 0.0,
+    "known_input_usd_lower_bound": 0.0
+  },
+  "cases": [
+    {
+      "id": "o01",
+      "expected": "pdf-extraction",
+      "predicted": "pdf-extraction",
+      "correct": true,
+      "decision": {
+        "outcome": "route",
+        "skill_id": "pdf-extraction",
+        "probabilities": {
+          "accessibility-audit": 0.03608637076582209,
+          "ci-workflow": 0.03608637076582209,
+          "code-tests": 0.03608637076582209,
+          "container-build": 0.03608637076582209,
+          "data-charting": 0.03608637076582209,
+          "data-cleaning": 0.03608637076582209,
+          "incident-triage": 0.03608637076582209,
+          "log-diagnosis": 0.03608637076582209,
+          "pdf-extraction": 0.44589018385350804,
+          "schema-migration": 0.03608637076582209,
+          "sql-tuning": 0.03608637076582209,
+          "web-layout": 0.07028665275871199,
+          "__no_skill__": 0.06912491657286568,
+          "__review__": 0.053834539156693326
+        },
+        "confidence": 0.20900576973561613,
+        "source": "lexical",
+        "reason": "dry_run",
+        "usage": {
+          "requests": 0,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "estimated_input_usd": 0.0
+        }
+      }
+    },
+    {
+      "id": "o02",
+      "expected": "pdf-extraction",
+      "predicted": "pdf-extraction",
+      "correct": true,
+      "decision": {
+        "outcome": "route",
+        "skill_id": "pdf-extraction",
+        "probabilities": {
+          "accessibility-audit": 0.04700974076999081,
+          "ci-workflow": 0.04700974076999081,
+          "code-tests": 0.04700974076999081,
+          "container-build": 0.04700974076999081,
+          "data-charting": 0.04700974076999081,
+          "data-cleaning": 0.04700974076999081,
+          "incident-triage": 0.04700974076999081,
+          "log-diagnosis": 0.04700974076999081,
+          "pdf-extraction": 0.28124022930374554,
+          "schema-migration": 0.04700974076999081,
+          "sql-tuning": 0.04700974076999081,
+          "web-layout": 0.08848299287968371,
+          "__no_skill__": 0.09004907780627655,
+          "__review__": 0.07013029231038603
+        },
+        "confidence": 0.08612934291532826,
+        "source": "lexical",
+        "reason": "dry_run",
+        "usage": {
+          "requests": 0,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "estimated_input_usd": 0.0
+        }
+      }
+    },
+    {
+      "id": "o03",
+      "expected": "log-diagnosis",
+      "predicted": "log-diagnosis",
+      "correct": true,
+      "decision": {
+        "outcome": "route",
+        "skill_id": "log-diagnosis",
+        "probabilities": {
+          "accessibility-audit": 0.029305543315083508,
+          "ci-workflow": 0.029305543315083508,
+          "code-tests": 0.029305543315083508,
+          "container-build": 0.029305543315083508,
+          "data-charting": 0.029305543315083508,
+          "data-cleaning": 0.029305543315083508,
+          "incident-triage": 0.029305543315083508,
+          "log-diagnosis": 0.5777843255023661,
+          "pdf-extraction": 0.029305543315083508,
+          "schema-migration": 0.029305543315083508,
+          "sql-tuning": 0.029305543315083508,
+          "web-layout": 0.029305543315083508,
+          "__no_skill__": 0.05613596473647771,
+          "__review__": 0.04371873329523761
+        },
+        "confidence": 0.3356026556920373,
+        "source": "lexical",
+        "reason": "dry_run",
+        "usage": {
+          "requests": 0,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "estimated_input_usd": 0.0
+        }
+      }
+    },
+    {
+      "id": "o04",
+      "expected": "log-diagnosis",
+      "predicted": "review",
+      "correct": false,
+      "decision": {
+        "outcome": "review",
+        "skill_id": null,
+        "probabilities": {
+          "accessibility-audit": 0.0437521432887341,
+          "ci-workflow": 0.08521753885256927,
+          "code-tests": 0.0437521432887341,
+          "container-build": 0.0437521432887341,
+          "data-charting": 0.0437521432887341,
+          "data-cleaning": 0.0437521432887341,
+          "incident-triage": 0.1487238427201728,
+          "log-diagnosis": 0.1441868732365213,
+          "pdf-extraction": 0.0437521432887341,
+          "schema-migration": 0.08710122723554739,
+          "sql-tuning": 0.07942597017474083,
+          "web-layout": 0.0437521432887341,
+          "__no_skill__": 0.08380901682643649,
+          "__review__": 0.06527052793287329
+        },
+        "confidence": 0.04111118693505289,
+        "source": "lexical",
+        "reason": "dry_run",
+        "usage": {
+          "requests": 0,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "estimated_input_usd": 0.0
+        }
+      }
+    },
+    {
+      "id": "o05",
+      "expected": "incident-triage",
+      "predicted": "incident-triage",
+      "correct": true,
+      "decision": {
+        "outcome": "route",
+        "skill_id": "incident-triage",
+        "probabilities": {
+          "accessibility-audit": 0.047633901423492185,
+          "ci-workflow": 0.047633901423492185,
+          "code-tests": 0.047633901423492185,
+          "container-build": 0.047633901423492185,
+          "data-charting": 0.047633901423492185,
+          "data-cleaning": 0.047633901423492185,
+          "incident-triage": 0.27169706737942684,
+          "log-diagnosis": 0.047633901423492185,
+          "pdf-extraction": 0.047633901423492185,
+          "schema-migration": 0.047633901423492185,
+          "sql-tuning": 0.047633901423492185,
+          "web-layout": 0.0896578047751536,
+          "__no_skill__": 0.09124468302192243,
+          "__review__": 0.07106143058857531
+        },
+        "confidence": 0.08046373553233432,
+        "source": "lexical",
+        "reason": "dry_run",
+        "usage": {
+          "requests": 0,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "estimated_input_usd": 0.0
+        }
+      }
+    },
+    {
+      "id": "o06",
+      "expected": "incident-triage",
+      "predicted": "incident-triage",
+      "correct": true,
+      "decision": {
+        "outcome": "route",
+        "skill_id": "incident-triage",
+        "probabilities": {
+          "accessibility-audit": 0.03298595396426589,
+          "ci-workflow": 0.03298595396426589,
+          "code-tests": 0.03298595396426589,
+          "container-build": 0.03298595396426589,
+          "data-charting": 0.03298595396426589,
+          "data-cleaning": 0.03298595396426589,
+          "incident-triage": 0.5247593039914014,
+          "log-diagnosis": 0.03298595396426589,
+          "pdf-extraction": 0.03298595396426589,
+          "schema-migration": 0.03298595396426589,
+          "sql-tuning": 0.03298595396426589,
+          "web-layout": 0.03298595396426589,
+          "__no_skill__": 0.0631859416025241,
+          "__review__": 0.049209260799149813
+        },
+        "confidence": 0.28043076009628165,
+        "source": "lexical",
+        "reason": "dry_run",
+        "usage": {
+          "requests": 0,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "estimated_input_usd": 0.0
+        }
+      }
+    },
+    {
+      "id": "o07",
+      "expected": "sql-tuning",
+      "predicted": "sql-tuning",
+      "correct": true,
+      "decision": {
+        "outcome": "route",
+        "skill_id": "sql-tuning",
+        "probabilities": {
+          "accessibility-audit": 0.025809424893246696,
+          "ci-workflow": 0.025809424893246696,
+          "code-tests": 0.025809424893246696,
+          "container-build": 0.025809424893246696,
+          "data-charting": 0.025809424893246696,
+          "data-cleaning": 0.025809424893246696,
+          "incident-triage": 0.04758487799015066,
+          "log-diagnosis": 0.04685344437345706,
+          "pdf-extraction": 0.025809424893246696,
+          "schema-migration": 0.10228882980998069,
+          "sql-tuning": 0.5088553040363936,
+          "web-layout": 0.025809424893246696,
+          "__no_skill__": 0.049439007156381665,
+          "__review__": 0.03850313748766283
+        },
+        "confidence": 0.28214581206274625,
+        "source": "lexical",
+        "reason": "dry_run",
+        "usage": {
+          "requests": 0,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "estimated_input_usd": 0.0
+        }
+      }
+    },
+    {
+      "id": "o08",
+      "expected": "sql-tuning",
+      "predicted": "review",
+      "correct": false,
+      "decision": {
+        "outcome": "review",
+        "skill_id": null,
+        "probabilities": {
+          "accessibility-audit": 0.04838833089782944,
+          "ci-workflow": 0.04838833089782944,
+          "code-tests": 0.04838833089782944,
+          "container-build": 0.04838833089782944,
+          "data-charting": 0.04838833089782944,
+          "data-cleaning": 0.04838833089782944,
+          "incident-triage": 0.04838833089782944,
+          "log-diagnosis": 0.04838833089782944,
+          "pdf-extraction": 0.04838833089782944,
+          "schema-migration": 0.19177435237203663,
+          "sql-tuning": 0.1594656080560219,
+          "web-layout": 0.04838833089782944,
+          "__no_skill__": 0.09268982348262693,
+          "__review__": 0.07218690711102015
+        },
+        "confidence": 0.058332440006243824,
+        "source": "lexical",
+        "reason": "dry_run",
+        "usage": {
+          "requests": 0,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "estimated_input_usd": 0.0
+        }
+      }
+    },
+    {
+      "id": "o09",
+      "expected": "schema-migration",
+      "predicted": "schema-migration",
+      "correct": true,
+      "decision": {
+        "outcome": "route",
+        "skill_id": "schema-migration",
+        "probabilities": {
+          "accessibility-audit": 0.0509442806583251,
+          "ci-workflow": 0.0509442806583251,
+          "code-tests": 0.0509442806583251,
+          "container-build": 0.0509442806583251,
+          "data-charting": 0.09747716874684496,
+          "data-cleaning": 0.0509442806583251,
+          "incident-triage": 0.0509442806583251,
+          "log-diagnosis": 0.0509442806583251,
+          "pdf-extraction": 0.0509442806583251,
+          "schema-migration": 0.2194942389744816,
+          "sql-tuning": 0.0509442806583251,
+          "web-layout": 0.0509442806583251,
+          "__no_skill__": 0.09758584960576466,
+          "__review__": 0.07599993608965785
+        },
+        "confidence": 0.05293887339355219,
+        "source": "lexical",
+        "reason": "dry_run",
+        "usage": {
+          "requests": 0,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "estimated_input_usd": 0.0
+        }
+      }
+    },
+    {
+      "id": "o10",
+      "expected": "schema-migration",
+      "predicted": "schema-migration",
+      "correct": true,
+      "decision": {
+        "outcome": "route",
+        "skill_id": "schema-migration",
+        "probabilities": {
+          "accessibility-audit": 0.0337931784225034,
+          "ci-workflow": 0.0337931784225034,
+          "code-tests": 0.0337931784225034,
+          "container-build": 0.0337931784225034,
+          "data-charting": 0.0337931784225034,
+          "data-cleaning": 0.0337931784225034,
+          "incident-triage": 0.06037891535007011,
+          "log-diagnosis": 0.0337931784225034,
+          "pdf-extraction": 0.0337931784225034,
+          "schema-migration": 0.4608386672985715,
+          "sql-tuning": 0.05949810035588242,
+          "web-layout": 0.0337931784225034,
+          "__no_skill__": 0.06473221301045667,
+          "__review__": 0.05041349818248864
+        },
+        "confidence": 0.22226745641605306,
+        "source": "lexical",
+        "reason": "dry_run",
+        "usage": {
+          "requests": 0,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "estimated_input_usd": 0.0
+        }
+      }
+    },
+    {
+      "id": "o11",
+      "expected": "container-build",
+      "predicted": "container-build",
+      "correct": true,
+      "decision": {
+        "outcome": "route",
+        "skill_id": "container-build",
+        "probabilities": {
+          "accessibility-audit": 0.02297536417715845,
+          "ci-workflow": 0.08716090144753999,
+          "code-tests": 0.044749898913479656,
+          "container-build": 0.5830254581849565,
+          "data-charting": 0.02297536417715845,
+          "data-cleaning": 0.02297536417715845,
+          "incident-triage": 0.02297536417715845,
+          "log-diagnosis": 0.02297536417715845,
+          "pdf-extraction": 0.02297536417715845,
+          "schema-migration": 0.02297536417715845,
+          "sql-tuning": 0.02297536417715845,
+          "web-layout": 0.02297536417715845,
+          "__no_skill__": 0.044010248142810265,
+          "__review__": 0.034275215716787474
+        },
+        "confidence": 0.35599139644183597,
+        "source": "lexical",
+        "reason": "dry_run",
+        "usage": {
+          "requests": 0,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "estimated_input_usd": 0.0
+        }
+      }
+    },
+    {
+      "id": "o12",
+      "expected": "container-build",
+      "predicted": "container-build",
+      "correct": true,
+      "decision": {
+        "outcome": "route",
+        "skill_id": "container-build",
+        "probabilities": {
+          "accessibility-audit": 0.04496903090435844,
+          "ci-workflow": 0.04496903090435844,
+          "code-tests": 0.04496903090435844,
+          "container-build": 0.35211473438145524,
+          "data-charting": 0.04496903090435844,
+          "data-cleaning": 0.04496903090435844,
+          "incident-triage": 0.04496903090435844,
+          "log-diagnosis": 0.04496903090435844,
+          "pdf-extraction": 0.04496903090435844,
+          "schema-migration": 0.04496903090435844,
+          "sql-tuning": 0.04496903090435844,
+          "web-layout": 0.04496903090435844,
+          "__no_skill__": 0.0861400147384863,
+          "__review__": 0.06708591093211548
+        },
+        "confidence": 0.13063286518766393,
+        "source": "lexical",
+        "reason": "dry_run",
+        "usage": {
+          "requests": 0,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "estimated_input_usd": 0.0
+        }
+      }
+    },
+    {
+      "id": "o13",
+      "expected": "ci-workflow",
+      "predicted": "ci-workflow",
+      "correct": true,
+      "decision": {
+        "outcome": "route",
+        "skill_id": "ci-workflow",
+        "probabilities": {
+          "accessibility-audit": 0.024882577991665614,
+          "ci-workflow": 0.5073907035753894,
+          "code-tests": 0.0831140081825792,
+          "container-build": 0.0801743596092073,
+          "data-charting": 0.024882577991665614,
+          "data-cleaning": 0.024882577991665614,
+          "incident-triage": 0.024882577991665614,
+          "log-diagnosis": 0.024882577991665614,
+          "pdf-extraction": 0.024882577991665614,
+          "schema-migration": 0.024882577991665614,
+          "sql-tuning": 0.024882577991665614,
+          "web-layout": 0.04547626623638929,
+          "__no_skill__": 0.04766359407415808,
+          "__review__": 0.03712044438895188
+        },
+        "confidence": 0.2813918937775849,
+        "source": "lexical",
+        "reason": "dry_run",
+        "usage": {
+          "requests": 0,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "estimated_input_usd": 0.0
+        }
+      }
+    },
+    {
+      "id": "o14",
+      "expected": "ci-workflow",
+      "predicted": "review",
+      "correct": false,
+      "decision": {
+        "outcome": "review",
+        "skill_id": null,
+        "probabilities": {
+          "accessibility-audit": 0.05779400198898424,
+          "ci-workflow": 0.11256734504272624,
+          "code-tests": 0.05779400198898424,
+          "container-build": 0.05779400198898424,
+          "data-charting": 0.05779400198898424,
+          "data-cleaning": 0.05779400198898424,
+          "incident-triage": 0.05779400198898424,
+          "log-diagnosis": 0.05779400198898424,
+          "pdf-extraction": 0.05779400198898424,
+          "schema-migration": 0.05779400198898424,
+          "sql-tuning": 0.05779400198898424,
+          "web-layout": 0.11256734504272624,
+          "__no_skill__": 0.11070677048200964,
+          "__review__": 0.0862185195426954
+        },
+        "confidence": 0.016946828183194595,
+        "source": "lexical",
+        "reason": "dry_run",
+        "usage": {
+          "requests": 0,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "estimated_input_usd": 0.0
+        }
+      }
+    },
+    {
+      "id": "o15",
+      "expected": "code-tests",
+      "predicted": "code-tests",
+      "correct": true,
+      "decision": {
+        "outcome": "route",
+        "skill_id": "code-tests",
+        "probabilities": {
+          "accessibility-audit": 0.033616817610666656,
+          "ci-workflow": 0.06547662001222175,
+          "code-tests": 0.4838104184386718,
+          "container-build": 0.033616817610666656,
+          "data-charting": 0.033616817610666656,
+          "data-cleaning": 0.033616817610666656,
+          "incident-triage": 0.033616817610666656,
+          "log-diagnosis": 0.033616817610666656,
+          "pdf-extraction": 0.033616817610666656,
+          "schema-migration": 0.033616817610666656,
+          "sql-tuning": 0.033616817610666656,
+          "web-layout": 0.033616817610666656,
+          "__no_skill__": 0.06439438667474535,
+          "__review__": 0.05015039876769452
+        },
+        "confidence": 0.2432903658416231,
+        "source": "lexical",
+        "reason": "dry_run",
+        "usage": {
+          "requests": 0,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "estimated_input_usd": 0.0
+        }
+      }
+    },
+    {
+      "id": "o16",
+      "expected": "code-tests",
+      "predicted": "code-tests",
+      "correct": true,
+      "decision": {
+        "outcome": "route",
+        "skill_id": "code-tests",
+        "probabilities": {
+          "accessibility-audit": 0.023897676964238296,
+          "ci-workflow": 0.10837952074072582,
+          "code-tests": 0.491517252223591,
+          "container-build": 0.10359601370245174,
+          "data-charting": 0.023897676964238296,
+          "data-cleaning": 0.023897676964238296,
+          "incident-triage": 0.023897676964238296,
+          "log-diagnosis": 0.023897676964238296,
+          "pdf-extraction": 0.023897676964238296,
+          "schema-migration": 0.023897676964238296,
+          "sql-tuning": 0.023897676964238296,
+          "web-layout": 0.023897676964238296,
+          "__no_skill__": 0.04577697594358332,
+          "__review__": 0.035651144711503546
+        },
+        "confidence": 0.28461215831552156,
+        "source": "lexical",
+        "reason": "dry_run",
+        "usage": {
+          "requests": 0,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "estimated_input_usd": 0.0
+        }
+      }
+    },
+    {
+      "id": "o17",
+      "expected": "accessibility-audit",
+      "predicted": "accessibility-audit",
+      "correct": true,
+      "decision": {
+        "outcome": "route",
+        "skill_id": "accessibility-audit",
+        "probabilities": {
+          "accessibility-audit": 0.9200219786545059,
+          "ci-workflow": 0.005208564164160785,
+          "code-tests": 0.005208564164160785,
+          "container-build": 0.005208564164160785,
+          "data-charting": 0.005208564164160785,
+          "data-cleaning": 0.005208564164160785,
+          "incident-triage": 0.005208564164160785,
+          "log-diagnosis": 0.005208564164160785,
+          "pdf-extraction": 0.005208564164160785,
+          "schema-migration": 0.005208564164160785,
+          "sql-tuning": 0.005208564164160785,
+          "web-layout": 0.010144897727553457,
+          "__no_skill__": 0.009977217316988623,
+          "__review__": 0.00777026465934432
+        },
+        "confidence": 0.8178080866852283,
+        "source": "lexical",
+        "reason": "dry_run",
+        "usage": {
+          "requests": 0,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "estimated_input_usd": 0.0
+        }
+      }
+    },
+    {
+      "id": "o18",
+      "expected": "accessibility-audit",
+      "predicted": "accessibility-audit",
+      "correct": true,
+      "decision": {
+        "outcome": "route",
+        "skill_id": "accessibility-audit",
+        "probabilities": {
+          "accessibility-audit": 0.2618176365155051,
+          "ci-workflow": 0.04155144276740316,
+          "code-tests": 0.04155144276740316,
+          "container-build": 0.04155144276740316,
+          "data-charting": 0.04155144276740316,
+          "data-cleaning": 0.04155144276740316,
+          "incident-triage": 0.04155144276740316,
+          "log-diagnosis": 0.04155144276740316,
+          "pdf-extraction": 0.07543090248589059,
+          "schema-migration": 0.04155144276740316,
+          "sql-tuning": 0.04155144276740316,
+          "web-layout": 0.1472075224235411,
+          "__no_skill__": 0.07959348512539492,
+          "__review__": 0.06198746854303978
+        },
+        "confidence": 0.09392735600266688,
+        "source": "lexical",
+        "reason": "dry_run",
+        "usage": {
+          "requests": 0,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "estimated_input_usd": 0.0
+        }
+      }
+    },
+    {
+      "id": "o19",
+      "expected": "web-layout",
+      "predicted": "web-layout",
+      "correct": true,
+      "decision": {
+        "outcome": "route",
+        "skill_id": "web-layout",
+        "probabilities": {
+          "accessibility-audit": 0.04710974668876646,
+          "ci-workflow": 0.04710974668876646,
+          "code-tests": 0.04710974668876646,
+          "container-build": 0.04710974668876646,
+          "data-charting": 0.04710974668876646,
+          "data-cleaning": 0.04710974668876646,
+          "incident-triage": 0.04710974668876646,
+          "log-diagnosis": 0.04710974668876646,
+          "pdf-extraction": 0.04710974668876646,
+          "schema-migration": 0.04710974668876646,
+          "sql-tuning": 0.0807889182420899,
+          "web-layout": 0.2875934880334853,
+          "__no_skill__": 0.09024064322683437,
+          "__review__": 0.07027948360992586
+        },
+        "confidence": 0.08881984975923218,
+        "source": "lexical",
+        "reason": "dry_run",
+        "usage": {
+          "requests": 0,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "estimated_input_usd": 0.0
+        }
+      }
+    },
+    {
+      "id": "o20",
+      "expected": "web-layout",
+      "predicted": "web-layout",
+      "correct": true,
+      "decision": {
+        "outcome": "route",
+        "skill_id": "web-layout",
+        "probabilities": {
+          "accessibility-audit": 0.009197613118233043,
+          "ci-workflow": 0.009197613118233043,
+          "code-tests": 0.009197613118233043,
+          "container-build": 0.009197613118233043,
+          "data-charting": 0.009197613118233043,
+          "data-cleaning": 0.009197613118233043,
+          "incident-triage": 0.009197613118233043,
+          "log-diagnosis": 0.009197613118233043,
+          "pdf-extraction": 0.018758381236521335,
+          "schema-migration": 0.009197613118233043,
+          "sql-tuning": 0.009197613118233043,
+          "web-layout": 0.8579258577145696,
+          "__no_skill__": 0.01761840345744921,
+          "__review__": 0.013721226409129393
+        },
+        "confidence": 0.7092462376025852,
+        "source": "lexical",
+        "reason": "dry_run",
+        "usage": {
+          "requests": 0,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "estimated_input_usd": 0.0
+        }
+      }
+    },
+    {
+      "id": "o21",
+      "expected": "data-cleaning",
+      "predicted": "data-cleaning",
+      "correct": true,
+      "decision": {
+        "outcome": "route",
+        "skill_id": "data-cleaning",
+        "probabilities": {
+          "accessibility-audit": 0.05399388471235324,
+          "ci-workflow": 0.05399388471235324,
+          "code-tests": 0.05399388471235324,
+          "container-build": 0.05399388471235324,
+          "data-charting": 0.05399388471235324,
+          "data-cleaning": 0.22209036674504862,
+          "incident-triage": 0.05399388471235324,
+          "log-diagnosis": 0.05399388471235324,
+          "pdf-extraction": 0.05399388471235324,
+          "schema-migration": 0.05399388471235324,
+          "sql-tuning": 0.05399388471235324,
+          "web-layout": 0.05399388471235324,
+          "__no_skill__": 0.10342749068358185,
+          "__review__": 0.08054941073548398
+        },
+        "confidence": 0.050663426360017416,
+        "source": "lexical",
+        "reason": "dry_run",
+        "usage": {
+          "requests": 0,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "estimated_input_usd": 0.0
+        }
+      }
+    },
+    {
+      "id": "o22",
+      "expected": "data-cleaning",
+      "predicted": "data-cleaning",
+      "correct": true,
+      "decision": {
+        "outcome": "route",
+        "skill_id": "data-cleaning",
+        "probabilities": {
+          "accessibility-audit": 0.01937113286591975,
+          "ci-workflow": 0.01937113286591975,
+          "code-tests": 0.01937113286591975,
+          "container-build": 0.01937113286591975,
+          "data-charting": 0.03706487092933846,
+          "data-cleaning": 0.6646880728538637,
+          "incident-triage": 0.03706487092933846,
+          "log-diagnosis": 0.01937113286591975,
+          "pdf-extraction": 0.01937113286591975,
+          "schema-migration": 0.04020859202050962,
+          "sql-tuning": 0.01937113286591975,
+          "web-layout": 0.01937113286591975,
+          "__no_skill__": 0.037106195908922245,
+          "__review__": 0.028898334430669602
+        },
+        "confidence": 0.4388906260540234,
+        "source": "lexical",
+        "reason": "dry_run",
+        "usage": {
+          "requests": 0,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "estimated_input_usd": 0.0
+        }
+      }
+    },
+    {
+      "id": "o23",
+      "expected": "data-charting",
+      "predicted": "data-charting",
+      "correct": true,
+      "decision": {
+        "outcome": "route",
+        "skill_id": "data-charting",
+        "probabilities": {
+          "accessibility-audit": 0.044602326486473026,
+          "ci-workflow": 0.044602326486473026,
+          "code-tests": 0.044602326486473026,
+          "container-build": 0.044602326486473026,
+          "data-charting": 0.3573979789701698,
+          "data-cleaning": 0.044602326486473026,
+          "incident-triage": 0.044602326486473026,
+          "log-diagnosis": 0.044602326486473026,
+          "pdf-extraction": 0.044602326486473026,
+          "schema-migration": 0.044602326486473026,
+          "sql-tuning": 0.044602326486473026,
+          "web-layout": 0.044602326486473026,
+          "__no_skill__": 0.085437577453847,
+          "__review__": 0.06653885222477984
+        },
+        "confidence": 0.13452003315362437,
+        "source": "lexical",
+        "reason": "dry_run",
+        "usage": {
+          "requests": 0,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "estimated_input_usd": 0.0
+        }
+      }
+    },
+    {
+      "id": "o24",
+      "expected": "data-charting",
+      "predicted": "data-charting",
+      "correct": true,
+      "decision": {
+        "outcome": "route",
+        "skill_id": "data-charting",
+        "probabilities": {
+          "accessibility-audit": 0.06163000515862523,
+          "ci-workflow": 0.029600464419494897,
+          "code-tests": 0.029600464419494897,
+          "container-build": 0.029600464419494897,
+          "data-charting": 0.4746330378329181,
+          "data-cleaning": 0.06303681980826391,
+          "incident-triage": 0.029600464419494897,
+          "log-diagnosis": 0.029600464419494897,
+          "pdf-extraction": 0.029600464419494897,
+          "schema-migration": 0.029600464419494897,
+          "sql-tuning": 0.029600464419494897,
+          "web-layout": 0.06303681980826391,
+          "__no_skill__": 0.056700898153315596,
+          "__review__": 0.04415870388265416
+        },
+        "confidence": 0.23913831073712388,
+        "source": "lexical",
+        "reason": "dry_run",
+        "usage": {
+          "requests": 0,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "estimated_input_usd": 0.0
+        }
+      }
+    },
+    {
+      "id": "o25",
+      "expected": "no_skill",
+      "predicted": "no_skill",
+      "correct": true,
+      "decision": {
+        "outcome": "no_skill",
+        "skill_id": null,
+        "probabilities": {
+          "accessibility-audit": 0.06490402257738175,
+          "ci-workflow": 0.06490402257738175,
+          "code-tests": 0.06490402257738175,
+          "container-build": 0.06490402257738175,
+          "data-charting": 0.06490402257738175,
+          "data-cleaning": 0.06490402257738175,
+          "incident-triage": 0.06490402257738175,
+          "log-diagnosis": 0.06490402257738175,
+          "pdf-extraction": 0.06490402257738175,
+          "schema-migration": 0.06490402257738175,
+          "sql-tuning": 0.06490402257738175,
+          "web-layout": 0.06490402257738175,
+          "__no_skill__": 0.12432630521421445,
+          "__review__": 0.0968254238572047
+        },
+        "confidence": 0.009000911518471266,
+        "source": "lexical",
+        "reason": "dry_run",
+        "usage": {
+          "requests": 0,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "estimated_input_usd": 0.0
+        }
+      }
+    },
+    {
+      "id": "o26",
+      "expected": "no_skill",
+      "predicted": "no_skill",
+      "correct": true,
+      "decision": {
+        "outcome": "no_skill",
+        "skill_id": null,
+        "probabilities": {
+          "accessibility-audit": 0.06490402257738175,
+          "ci-workflow": 0.06490402257738175,
+          "code-tests": 0.06490402257738175,
+          "container-build": 0.06490402257738175,
+          "data-charting": 0.06490402257738175,
+          "data-cleaning": 0.06490402257738175,
+          "incident-triage": 0.06490402257738175,
+          "log-diagnosis": 0.06490402257738175,
+          "pdf-extraction": 0.06490402257738175,
+          "schema-migration": 0.06490402257738175,
+          "sql-tuning": 0.06490402257738175,
+          "web-layout": 0.06490402257738175,
+          "__no_skill__": 0.12432630521421445,
+          "__review__": 0.0968254238572047
+        },
+        "confidence": 0.009000911518471266,
+        "source": "lexical",
+        "reason": "dry_run",
+        "usage": {
+          "requests": 0,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "estimated_input_usd": 0.0
+        }
+      }
+    },
+    {
+      "id": "o27",
+      "expected": "no_skill",
+      "predicted": "review",
+      "correct": false,
+      "decision": {
+        "outcome": "review",
+        "skill_id": null,
+        "probabilities": {
+          "accessibility-audit": 0.05295846718436984,
+          "ci-workflow": 0.05295846718436984,
+          "code-tests": 0.05295846718436984,
+          "container-build": 0.05295846718436984,
+          "data-charting": 0.05295846718436984,
+          "data-cleaning": 0.05295846718436984,
+          "incident-triage": 0.05295846718436984,
+          "log-diagnosis": 0.1099257031473967,
+          "pdf-extraction": 0.05295846718436984,
+          "schema-migration": 0.12307353361735723,
+          "sql-tuning": 0.1099257031473967,
+          "web-layout": 0.05295846718436984,
+          "__no_skill__": 0.10144410613365303,
+          "__review__": 0.07900474929486768
+        },
+        "confidence": 0.023755478606380054,
+        "source": "lexical",
+        "reason": "dry_run",
+        "usage": {
+          "requests": 0,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "estimated_input_usd": 0.0
+        }
+      }
+    },
+    {
+      "id": "o28",
+      "expected": "no_skill",
+      "predicted": "no_skill",
+      "correct": true,
+      "decision": {
+        "outcome": "no_skill",
+        "skill_id": null,
+        "probabilities": {
+          "accessibility-audit": 0.06490402257738175,
+          "ci-workflow": 0.06490402257738175,
+          "code-tests": 0.06490402257738175,
+          "container-build": 0.06490402257738175,
+          "data-charting": 0.06490402257738175,
+          "data-cleaning": 0.06490402257738175,
+          "incident-triage": 0.06490402257738175,
+          "log-diagnosis": 0.06490402257738175,
+          "pdf-extraction": 0.06490402257738175,
+          "schema-migration": 0.06490402257738175,
+          "sql-tuning": 0.06490402257738175,
+          "web-layout": 0.06490402257738175,
+          "__no_skill__": 0.12432630521421445,
+          "__review__": 0.0968254238572047
+        },
+        "confidence": 0.009000911518471266,
+        "source": "lexical",
+        "reason": "dry_run",
+        "usage": {
+          "requests": 0,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "estimated_input_usd": 0.0
+        }
+      }
+    },
+    {
+      "id": "o29",
+      "expected": "no_skill",
+      "predicted": "no_skill",
+      "correct": true,
+      "decision": {
+        "outcome": "no_skill",
+        "skill_id": null,
+        "probabilities": {
+          "accessibility-audit": 0.06490402257738175,
+          "ci-workflow": 0.06490402257738175,
+          "code-tests": 0.06490402257738175,
+          "container-build": 0.06490402257738175,
+          "data-charting": 0.06490402257738175,
+          "data-cleaning": 0.06490402257738175,
+          "incident-triage": 0.06490402257738175,
+          "log-diagnosis": 0.06490402257738175,
+          "pdf-extraction": 0.06490402257738175,
+          "schema-migration": 0.06490402257738175,
+          "sql-tuning": 0.06490402257738175,
+          "web-layout": 0.06490402257738175,
+          "__no_skill__": 0.12432630521421445,
+          "__review__": 0.0968254238572047
+        },
+        "confidence": 0.009000911518471266,
+        "source": "lexical",
+        "reason": "dry_run",
+        "usage": {
+          "requests": 0,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "estimated_input_usd": 0.0
+        }
+      }
+    },
+    {
+      "id": "o30",
+      "expected": "no_skill",
+      "predicted": "review",
+      "correct": false,
+      "decision": {
+        "outcome": "review",
+        "skill_id": null,
+        "probabilities": {
+          "accessibility-audit": 0.05752675934365497,
+          "ci-workflow": 0.05752675934365497,
+          "code-tests": 0.05752675934365497,
+          "container-build": 0.05752675934365497,
+          "data-charting": 0.05752675934365497,
+          "data-cleaning": 0.05752675934365497,
+          "incident-triage": 0.05752675934365497,
+          "log-diagnosis": 0.05752675934365497,
+          "pdf-extraction": 0.11204682744519692,
+          "schema-migration": 0.05752675934365497,
+          "sql-tuning": 0.05752675934365497,
+          "web-layout": 0.11667088247049535,
+          "__no_skill__": 0.11019485628362774,
+          "__review__": 0.0858198403641302
+        },
+        "confidence": 0.017697046366413005,
+        "source": "lexical",
+        "reason": "dry_run",
+        "usage": {
+          "requests": 0,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "estimated_input_usd": 0.0
+        }
+      }
+    },
+    {
+      "id": "o31",
+      "expected": "review",
+      "predicted": "no_skill",
+      "correct": false,
+      "decision": {
+        "outcome": "no_skill",
+        "skill_id": null,
+        "probabilities": {
+          "accessibility-audit": 0.06490402257738175,
+          "ci-workflow": 0.06490402257738175,
+          "code-tests": 0.06490402257738175,
+          "container-build": 0.06490402257738175,
+          "data-charting": 0.06490402257738175,
+          "data-cleaning": 0.06490402257738175,
+          "incident-triage": 0.06490402257738175,
+          "log-diagnosis": 0.06490402257738175,
+          "pdf-extraction": 0.06490402257738175,
+          "schema-migration": 0.06490402257738175,
+          "sql-tuning": 0.06490402257738175,
+          "web-layout": 0.06490402257738175,
+          "__no_skill__": 0.12432630521421445,
+          "__review__": 0.0968254238572047
+        },
+        "confidence": 0.009000911518471266,
+        "source": "lexical",
+        "reason": "dry_run",
+        "usage": {
+          "requests": 0,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "estimated_input_usd": 0.0
+        }
+      }
+    },
+    {
+      "id": "o32",
+      "expected": "review",
+      "predicted": "sql-tuning",
+      "correct": false,
+      "decision": {
+        "outcome": "route",
+        "skill_id": "sql-tuning",
+        "probabilities": {
+          "accessibility-audit": 0.028651809177424218,
+          "ci-workflow": 0.028651809177424218,
+          "code-tests": 0.028651809177424218,
+          "container-build": 0.028651809177424218,
+          "data-charting": 0.028651809177424218,
+          "data-cleaning": 0.028651809177424218,
+          "incident-triage": 0.028651809177424218,
+          "log-diagnosis": 0.028651809177424218,
+          "pdf-extraction": 0.028651809177424218,
+          "schema-migration": 0.256238030403656,
+          "sql-tuning": 0.3596166909546445,
+          "web-layout": 0.028651809177424218,
+          "__no_skill__": 0.054883710304471145,
+          "__review__": 0.04274347656298626
+        },
+        "confidence": 0.23131217902002288,
+        "source": "lexical",
+        "reason": "dry_run",
+        "usage": {
+          "requests": 0,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "estimated_input_usd": 0.0
+        }
+      }
+    },
+    {
+      "id": "o33",
+      "expected": "review",
+      "predicted": "no_skill",
+      "correct": false,
+      "decision": {
+        "outcome": "no_skill",
+        "skill_id": null,
+        "probabilities": {
+          "accessibility-audit": 0.06490402257738175,
+          "ci-workflow": 0.06490402257738175,
+          "code-tests": 0.06490402257738175,
+          "container-build": 0.06490402257738175,
+          "data-charting": 0.06490402257738175,
+          "data-cleaning": 0.06490402257738175,
+          "incident-triage": 0.06490402257738175,
+          "log-diagnosis": 0.06490402257738175,
+          "pdf-extraction": 0.06490402257738175,
+          "schema-migration": 0.06490402257738175,
+          "sql-tuning": 0.06490402257738175,
+          "web-layout": 0.06490402257738175,
+          "__no_skill__": 0.12432630521421445,
+          "__review__": 0.0968254238572047
+        },
+        "confidence": 0.009000911518471266,
+        "source": "lexical",
+        "reason": "dry_run",
+        "usage": {
+          "requests": 0,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "estimated_input_usd": 0.0
+        }
+      }
+    },
+    {
+      "id": "o34",
+      "expected": "review",
+      "predicted": "review",
+      "correct": true,
+      "decision": {
+        "outcome": "review",
+        "skill_id": null,
+        "probabilities": {
+          "accessibility-audit": 0.05367951548064106,
+          "ci-workflow": 0.05367951548064106,
+          "code-tests": 0.05367951548064106,
+          "container-build": 0.05367951548064106,
+          "data-charting": 0.13438306316578802,
+          "data-cleaning": 0.1459160514915126,
+          "incident-triage": 0.05367951548064106,
+          "log-diagnosis": 0.05367951548064106,
+          "pdf-extraction": 0.05367951548064106,
+          "schema-migration": 0.05367951548064106,
+          "sql-tuning": 0.05367951548064106,
+          "web-layout": 0.05367951548064106,
+          "__no_skill__": 0.10282530358485145,
+          "__review__": 0.08008042695143724
+        },
+        "confidence": 0.031237117166132422,
+        "source": "lexical",
+        "reason": "dry_run",
+        "usage": {
+          "requests": 0,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "estimated_input_usd": 0.0
+        }
+      }
+    },
+    {
+      "id": "o35",
+      "expected": "review",
+      "predicted": "review",
+      "correct": true,
+      "decision": {
+        "outcome": "review",
+        "skill_id": null,
+        "probabilities": {
+          "accessibility-audit": 0.14849936804457506,
+          "ci-workflow": 0.15453037863021488,
+          "code-tests": 0.15453037863021488,
+          "container-build": 0.07777492168795302,
+          "data-charting": 0.0407337655588643,
+          "data-cleaning": 0.0407337655588643,
+          "incident-triage": 0.0407337655588643,
+          "log-diagnosis": 0.0407337655588643,
+          "pdf-extraction": 0.0407337655588643,
+          "schema-migration": 0.0407337655588643,
+          "sql-tuning": 0.0407337655588643,
+          "web-layout": 0.0407337655588643,
+          "__no_skill__": 0.07802719104748462,
+          "__review__": 0.06076763748864313
+        },
+        "confidence": 0.06360392109859303,
+        "source": "lexical",
+        "reason": "dry_run",
+        "usage": {
+          "requests": 0,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "estimated_input_usd": 0.0
+        }
+      }
+    },
+    {
+      "id": "o36",
+      "expected": "review",
+      "predicted": "no_skill",
+      "correct": false,
+      "decision": {
+        "outcome": "no_skill",
+        "skill_id": null,
+        "probabilities": {
+          "accessibility-audit": 0.06490402257738175,
+          "ci-workflow": 0.06490402257738175,
+          "code-tests": 0.06490402257738175,
+          "container-build": 0.06490402257738175,
+          "data-charting": 0.06490402257738175,
+          "data-cleaning": 0.06490402257738175,
+          "incident-triage": 0.06490402257738175,
+          "log-diagnosis": 0.06490402257738175,
+          "pdf-extraction": 0.06490402257738175,
+          "schema-migration": 0.06490402257738175,
+          "sql-tuning": 0.06490402257738175,
+          "web-layout": 0.06490402257738175,
+          "__no_skill__": 0.12432630521421445,
+          "__review__": 0.0968254238572047
+        },
+        "confidence": 0.009000911518471266,
+        "source": "lexical",
+        "reason": "dry_run",
+        "usage": {
+          "requests": 0,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "estimated_input_usd": 0.0
+        }
+      }
+    }
+  ]
+}

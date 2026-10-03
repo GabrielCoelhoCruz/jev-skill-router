@@ -1,0 +1,1279 @@
+{
+  "summary": {
+    "cases": 36,
+    "correct": 36,
+    "accuracy": 1.0,
+    "wrong_routes": 0,
+    "reviews": 6,
+    "unnecessary_reviews": 0,
+    "fallbacks": 0,
+    "api_requests": 36,
+    "known_input_tokens": 34678,
+    "known_output_tokens": 5604,
+    "token_usage_complete": true,
+    "estimated_input_usd": 0.001456476,
+    "known_input_usd_lower_bound": 0.001456476
+  },
+  "cases": [
+    {
+      "id": "o01",
+      "expected": "pdf-extraction",
+      "predicted": "pdf-extraction",
+      "correct": true,
+      "decision": {
+        "outcome": "route",
+        "skill_id": "pdf-extraction",
+        "probabilities": {
+          "web-layout": 0.0,
+          "schema-migration": 0.0,
+          "data-charting": 0.0,
+          "__review__": 0.0,
+          "ci-workflow": 0.0,
+          "data-cleaning": 0.0,
+          "pdf-extraction": 1.0,
+          "sql-tuning": 0.0,
+          "code-tests": 0.0,
+          "log-diagnosis": 0.0,
+          "__no_skill__": 0.0,
+          "accessibility-audit": 0.0,
+          "container-build": 0.0,
+          "incident-triage": 0.0
+        },
+        "confidence": 1.0,
+        "source": "jev",
+        "reason": "choice",
+        "usage": {
+          "requests": 1,
+          "input_tokens": 967,
+          "output_tokens": 157,
+          "estimated_input_usd": 4.0614e-05
+        }
+      }
+    },
+    {
+      "id": "o02",
+      "expected": "pdf-extraction",
+      "predicted": "pdf-extraction",
+      "correct": true,
+      "decision": {
+        "outcome": "route",
+        "skill_id": "pdf-extraction",
+        "probabilities": {
+          "__no_skill__": 0.0,
+          "sql-tuning": 0.0,
+          "data-cleaning": 0.0,
+          "schema-migration": 0.0,
+          "accessibility-audit": 0.0,
+          "container-build": 0.0,
+          "log-diagnosis": 0.0,
+          "pdf-extraction": 1.0,
+          "ci-workflow": 0.0,
+          "__review__": 0.0,
+          "data-charting": 0.0,
+          "incident-triage": 0.0,
+          "web-layout": 0.0,
+          "code-tests": 0.0
+        },
+        "confidence": 0.99,
+        "source": "jev",
+        "reason": "choice",
+        "usage": {
+          "requests": 1,
+          "input_tokens": 967,
+          "output_tokens": 157,
+          "estimated_input_usd": 4.0614e-05
+        }
+      }
+    },
+    {
+      "id": "o03",
+      "expected": "log-diagnosis",
+      "predicted": "log-diagnosis",
+      "correct": true,
+      "decision": {
+        "outcome": "route",
+        "skill_id": "log-diagnosis",
+        "probabilities": {
+          "ci-workflow": 0.0,
+          "web-layout": 0.0,
+          "incident-triage": 0.0,
+          "accessibility-audit": 0.0,
+          "data-charting": 0.0,
+          "__review__": 0.0,
+          "schema-migration": 0.0,
+          "code-tests": 0.0,
+          "data-cleaning": 0.0,
+          "log-diagnosis": 1.0,
+          "sql-tuning": 0.0,
+          "pdf-extraction": 0.0,
+          "__no_skill__": 0.0,
+          "container-build": 0.0
+        },
+        "confidence": 1.0,
+        "source": "jev",
+        "reason": "choice",
+        "usage": {
+          "requests": 1,
+          "input_tokens": 967,
+          "output_tokens": 156,
+          "estimated_input_usd": 4.0614e-05
+        }
+      }
+    },
+    {
+      "id": "o04",
+      "expected": "log-diagnosis",
+      "predicted": "log-diagnosis",
+      "correct": true,
+      "decision": {
+        "outcome": "route",
+        "skill_id": "log-diagnosis",
+        "probabilities": {
+          "accessibility-audit": 0.0,
+          "data-cleaning": 0.0,
+          "log-diagnosis": 1.0,
+          "ci-workflow": 0.0,
+          "container-build": 0.0,
+          "schema-migration": 0.0,
+          "__no_skill__": 0.0,
+          "incident-triage": 0.0,
+          "__review__": 0.0,
+          "data-charting": 0.0,
+          "code-tests": 0.0,
+          "sql-tuning": 0.0,
+          "pdf-extraction": 0.0,
+          "web-layout": 0.0
+        },
+        "confidence": 1.0,
+        "source": "jev",
+        "reason": "choice",
+        "usage": {
+          "requests": 1,
+          "input_tokens": 968,
+          "output_tokens": 156,
+          "estimated_input_usd": 4.0656e-05
+        }
+      }
+    },
+    {
+      "id": "o05",
+      "expected": "incident-triage",
+      "predicted": "incident-triage",
+      "correct": true,
+      "decision": {
+        "outcome": "route",
+        "skill_id": "incident-triage",
+        "probabilities": {
+          "accessibility-audit": 0.0,
+          "data-cleaning": 0.0,
+          "__no_skill__": 0.0,
+          "code-tests": 0.0,
+          "log-diagnosis": 0.0,
+          "incident-triage": 0.99,
+          "schema-migration": 0.0,
+          "sql-tuning": 0.0,
+          "web-layout": 0.0,
+          "container-build": 0.0,
+          "__review__": 0.01,
+          "ci-workflow": 0.0,
+          "pdf-extraction": 0.0,
+          "data-charting": 0.0
+        },
+        "confidence": 0.99,
+        "source": "jev",
+        "reason": "choice",
+        "usage": {
+          "requests": 1,
+          "input_tokens": 964,
+          "output_tokens": 156,
+          "estimated_input_usd": 4.0488e-05
+        }
+      }
+    },
+    {
+      "id": "o06",
+      "expected": "incident-triage",
+      "predicted": "incident-triage",
+      "correct": true,
+      "decision": {
+        "outcome": "route",
+        "skill_id": "incident-triage",
+        "probabilities": {
+          "sql-tuning": 0.0,
+          "__review__": 0.0,
+          "__no_skill__": 0.0,
+          "pdf-extraction": 0.0,
+          "container-build": 0.0,
+          "data-charting": 0.0,
+          "incident-triage": 1.0,
+          "web-layout": 0.0,
+          "accessibility-audit": 0.0,
+          "data-cleaning": 0.0,
+          "log-diagnosis": 0.0,
+          "ci-workflow": 0.0,
+          "schema-migration": 0.0,
+          "code-tests": 0.0
+        },
+        "confidence": 1.0,
+        "source": "jev",
+        "reason": "choice",
+        "usage": {
+          "requests": 1,
+          "input_tokens": 966,
+          "output_tokens": 156,
+          "estimated_input_usd": 4.0572e-05
+        }
+      }
+    },
+    {
+      "id": "o07",
+      "expected": "sql-tuning",
+      "predicted": "sql-tuning",
+      "correct": true,
+      "decision": {
+        "outcome": "route",
+        "skill_id": "sql-tuning",
+        "probabilities": {
+          "container-build": 0.0,
+          "sql-tuning": 0.99,
+          "accessibility-audit": 0.0,
+          "data-charting": 0.0,
+          "__review__": 0.01,
+          "schema-migration": 0.0,
+          "incident-triage": 0.0,
+          "pdf-extraction": 0.0,
+          "log-diagnosis": 0.0,
+          "__no_skill__": 0.0,
+          "ci-workflow": 0.0,
+          "code-tests": 0.0,
+          "data-cleaning": 0.0,
+          "web-layout": 0.0
+        },
+        "confidence": 0.98,
+        "source": "jev",
+        "reason": "choice",
+        "usage": {
+          "requests": 1,
+          "input_tokens": 970,
+          "output_tokens": 156,
+          "estimated_input_usd": 4.074e-05
+        }
+      }
+    },
+    {
+      "id": "o08",
+      "expected": "sql-tuning",
+      "predicted": "sql-tuning",
+      "correct": true,
+      "decision": {
+        "outcome": "route",
+        "skill_id": "sql-tuning",
+        "probabilities": {
+          "web-layout": 0.0,
+          "schema-migration": 0.0,
+          "code-tests": 0.0,
+          "__review__": 0.0,
+          "data-charting": 0.0,
+          "data-cleaning": 0.0,
+          "pdf-extraction": 0.0,
+          "sql-tuning": 1.0,
+          "accessibility-audit": 0.0,
+          "log-diagnosis": 0.0,
+          "__no_skill__": 0.0,
+          "ci-workflow": 0.0,
+          "container-build": 0.0,
+          "incident-triage": 0.0
+        },
+        "confidence": 1.0,
+        "source": "jev",
+        "reason": "choice",
+        "usage": {
+          "requests": 1,
+          "input_tokens": 967,
+          "output_tokens": 156,
+          "estimated_input_usd": 4.0614e-05
+        }
+      }
+    },
+    {
+      "id": "o09",
+      "expected": "schema-migration",
+      "predicted": "schema-migration",
+      "correct": true,
+      "decision": {
+        "outcome": "route",
+        "skill_id": "schema-migration",
+        "probabilities": {
+          "incident-triage": 0.0,
+          "sql-tuning": 0.0,
+          "data-charting": 0.0,
+          "schema-migration": 1.0,
+          "__review__": 0.0,
+          "code-tests": 0.0,
+          "log-diagnosis": 0.0,
+          "container-build": 0.0,
+          "web-layout": 0.0,
+          "accessibility-audit": 0.0,
+          "__no_skill__": 0.0,
+          "ci-workflow": 0.0,
+          "pdf-extraction": 0.0,
+          "data-cleaning": 0.0
+        },
+        "confidence": 1.0,
+        "source": "jev",
+        "reason": "choice",
+        "usage": {
+          "requests": 1,
+          "input_tokens": 964,
+          "output_tokens": 156,
+          "estimated_input_usd": 4.0488e-05
+        }
+      }
+    },
+    {
+      "id": "o10",
+      "expected": "schema-migration",
+      "predicted": "schema-migration",
+      "correct": true,
+      "decision": {
+        "outcome": "route",
+        "skill_id": "schema-migration",
+        "probabilities": {
+          "container-build": 0.0,
+          "data-cleaning": 0.0,
+          "__review__": 0.0,
+          "log-diagnosis": 0.0,
+          "code-tests": 0.0,
+          "__no_skill__": 0.0,
+          "accessibility-audit": 0.0,
+          "incident-triage": 0.0,
+          "schema-migration": 1.0,
+          "web-layout": 0.0,
+          "pdf-extraction": 0.0,
+          "ci-workflow": 0.0,
+          "sql-tuning": 0.0,
+          "data-charting": 0.0
+        },
+        "confidence": 1.0,
+        "source": "jev",
+        "reason": "choice",
+        "usage": {
+          "requests": 1,
+          "input_tokens": 967,
+          "output_tokens": 156,
+          "estimated_input_usd": 4.0614e-05
+        }
+      }
+    },
+    {
+      "id": "o11",
+      "expected": "container-build",
+      "predicted": "container-build",
+      "correct": true,
+      "decision": {
+        "outcome": "route",
+        "skill_id": "container-build",
+        "probabilities": {
+          "data-cleaning": 0.0,
+          "pdf-extraction": 0.0,
+          "code-tests": 0.0,
+          "schema-migration": 0.0,
+          "ci-workflow": 0.0,
+          "data-charting": 0.0,
+          "web-layout": 0.0,
+          "accessibility-audit": 0.0,
+          "incident-triage": 0.0,
+          "__review__": 0.0,
+          "container-build": 1.0,
+          "sql-tuning": 0.0,
+          "__no_skill__": 0.0,
+          "log-diagnosis": 0.0
+        },
+        "confidence": 1.0,
+        "source": "jev",
+        "reason": "choice",
+        "usage": {
+          "requests": 1,
+          "input_tokens": 966,
+          "output_tokens": 154,
+          "estimated_input_usd": 4.0572e-05
+        }
+      }
+    },
+    {
+      "id": "o12",
+      "expected": "container-build",
+      "predicted": "container-build",
+      "correct": true,
+      "decision": {
+        "outcome": "route",
+        "skill_id": "container-build",
+        "probabilities": {
+          "__review__": 0.0,
+          "log-diagnosis": 0.0,
+          "ci-workflow": 0.0,
+          "accessibility-audit": 0.0,
+          "data-charting": 0.0,
+          "schema-migration": 0.0,
+          "sql-tuning": 0.0,
+          "container-build": 1.0,
+          "web-layout": 0.0,
+          "data-cleaning": 0.0,
+          "incident-triage": 0.0,
+          "pdf-extraction": 0.0,
+          "code-tests": 0.0,
+          "__no_skill__": 0.0
+        },
+        "confidence": 1.0,
+        "source": "jev",
+        "reason": "choice",
+        "usage": {
+          "requests": 1,
+          "input_tokens": 967,
+          "output_tokens": 154,
+          "estimated_input_usd": 4.0614e-05
+        }
+      }
+    },
+    {
+      "id": "o13",
+      "expected": "ci-workflow",
+      "predicted": "ci-workflow",
+      "correct": true,
+      "decision": {
+        "outcome": "route",
+        "skill_id": "ci-workflow",
+        "probabilities": {
+          "sql-tuning": 0.0,
+          "schema-migration": 0.0,
+          "code-tests": 0.0,
+          "web-layout": 0.0,
+          "container-build": 0.0,
+          "ci-workflow": 1.0,
+          "incident-triage": 0.0,
+          "pdf-extraction": 0.0,
+          "data-cleaning": 0.0,
+          "accessibility-audit": 0.0,
+          "log-diagnosis": 0.0,
+          "data-charting": 0.0,
+          "__no_skill__": 0.0,
+          "__review__": 0.0
+        },
+        "confidence": 1.0,
+        "source": "jev",
+        "reason": "choice",
+        "usage": {
+          "requests": 1,
+          "input_tokens": 967,
+          "output_tokens": 156,
+          "estimated_input_usd": 4.0614e-05
+        }
+      }
+    },
+    {
+      "id": "o14",
+      "expected": "ci-workflow",
+      "predicted": "ci-workflow",
+      "correct": true,
+      "decision": {
+        "outcome": "route",
+        "skill_id": "ci-workflow",
+        "probabilities": {
+          "container-build": 0.0,
+          "web-layout": 0.0,
+          "ci-workflow": 1.0,
+          "code-tests": 0.0,
+          "log-diagnosis": 0.0,
+          "__review__": 0.0,
+          "data-charting": 0.0,
+          "schema-migration": 0.0,
+          "incident-triage": 0.0,
+          "__no_skill__": 0.0,
+          "accessibility-audit": 0.0,
+          "pdf-extraction": 0.0,
+          "data-cleaning": 0.0,
+          "sql-tuning": 0.0
+        },
+        "confidence": 1.0,
+        "source": "jev",
+        "reason": "choice",
+        "usage": {
+          "requests": 1,
+          "input_tokens": 962,
+          "output_tokens": 156,
+          "estimated_input_usd": 4.0404e-05
+        }
+      }
+    },
+    {
+      "id": "o15",
+      "expected": "code-tests",
+      "predicted": "code-tests",
+      "correct": true,
+      "decision": {
+        "outcome": "route",
+        "skill_id": "code-tests",
+        "probabilities": {
+          "accessibility-audit": 0.0,
+          "ci-workflow": 0.0,
+          "incident-triage": 0.0,
+          "data-cleaning": 0.0,
+          "log-diagnosis": 0.0,
+          "container-build": 0.0,
+          "__review__": 0.0,
+          "data-charting": 0.0,
+          "schema-migration": 0.0,
+          "sql-tuning": 0.0,
+          "__no_skill__": 0.0,
+          "web-layout": 0.0,
+          "code-tests": 1.0,
+          "pdf-extraction": 0.0
+        },
+        "confidence": 1.0,
+        "source": "jev",
+        "reason": "choice",
+        "usage": {
+          "requests": 1,
+          "input_tokens": 963,
+          "output_tokens": 154,
+          "estimated_input_usd": 4.0446e-05
+        }
+      }
+    },
+    {
+      "id": "o16",
+      "expected": "code-tests",
+      "predicted": "code-tests",
+      "correct": true,
+      "decision": {
+        "outcome": "route",
+        "skill_id": "code-tests",
+        "probabilities": {
+          "incident-triage": 0.0,
+          "ci-workflow": 0.0,
+          "__review__": 0.0,
+          "code-tests": 1.0,
+          "container-build": 0.0,
+          "sql-tuning": 0.0,
+          "data-charting": 0.0,
+          "schema-migration": 0.0,
+          "pdf-extraction": 0.0,
+          "__no_skill__": 0.0,
+          "log-diagnosis": 0.0,
+          "data-cleaning": 0.0,
+          "web-layout": 0.0,
+          "accessibility-audit": 0.0
+        },
+        "confidence": 1.0,
+        "source": "jev",
+        "reason": "choice",
+        "usage": {
+          "requests": 1,
+          "input_tokens": 961,
+          "output_tokens": 154,
+          "estimated_input_usd": 4.0362e-05
+        }
+      }
+    },
+    {
+      "id": "o17",
+      "expected": "accessibility-audit",
+      "predicted": "accessibility-audit",
+      "correct": true,
+      "decision": {
+        "outcome": "route",
+        "skill_id": "accessibility-audit",
+        "probabilities": {
+          "web-layout": 0.0,
+          "__no_skill__": 0.0,
+          "container-build": 0.0,
+          "schema-migration": 0.0,
+          "__review__": 0.02,
+          "code-tests": 0.0,
+          "sql-tuning": 0.0,
+          "incident-triage": 0.0,
+          "data-charting": 0.0,
+          "accessibility-audit": 0.98,
+          "ci-workflow": 0.0,
+          "data-cleaning": 0.0,
+          "pdf-extraction": 0.0,
+          "log-diagnosis": 0.0
+        },
+        "confidence": 0.98,
+        "source": "jev",
+        "reason": "choice",
+        "usage": {
+          "requests": 1,
+          "input_tokens": 963,
+          "output_tokens": 158,
+          "estimated_input_usd": 4.0446e-05
+        }
+      }
+    },
+    {
+      "id": "o18",
+      "expected": "accessibility-audit",
+      "predicted": "accessibility-audit",
+      "correct": true,
+      "decision": {
+        "outcome": "route",
+        "skill_id": "accessibility-audit",
+        "probabilities": {
+          "data-cleaning": 0.0,
+          "pdf-extraction": 0.0,
+          "ci-workflow": 0.0,
+          "sql-tuning": 0.0,
+          "incident-triage": 0.0,
+          "log-diagnosis": 0.0,
+          "container-build": 0.0,
+          "accessibility-audit": 0.98,
+          "data-charting": 0.0,
+          "web-layout": 0.0,
+          "__no_skill__": 0.0,
+          "schema-migration": 0.0,
+          "code-tests": 0.0,
+          "__review__": 0.02
+        },
+        "confidence": 0.98,
+        "source": "jev",
+        "reason": "choice",
+        "usage": {
+          "requests": 1,
+          "input_tokens": 963,
+          "output_tokens": 158,
+          "estimated_input_usd": 4.0446e-05
+        }
+      }
+    },
+    {
+      "id": "o19",
+      "expected": "web-layout",
+      "predicted": "web-layout",
+      "correct": true,
+      "decision": {
+        "outcome": "route",
+        "skill_id": "web-layout",
+        "probabilities": {
+          "__review__": 0.0,
+          "web-layout": 1.0,
+          "__no_skill__": 0.0,
+          "data-charting": 0.0,
+          "code-tests": 0.0,
+          "incident-triage": 0.0,
+          "sql-tuning": 0.0,
+          "ci-workflow": 0.0,
+          "accessibility-audit": 0.0,
+          "pdf-extraction": 0.0,
+          "schema-migration": 0.0,
+          "log-diagnosis": 0.0,
+          "data-cleaning": 0.0,
+          "container-build": 0.0
+        },
+        "confidence": 1.0,
+        "source": "jev",
+        "reason": "choice",
+        "usage": {
+          "requests": 1,
+          "input_tokens": 964,
+          "output_tokens": 154,
+          "estimated_input_usd": 4.0488e-05
+        }
+      }
+    },
+    {
+      "id": "o20",
+      "expected": "web-layout",
+      "predicted": "web-layout",
+      "correct": true,
+      "decision": {
+        "outcome": "route",
+        "skill_id": "web-layout",
+        "probabilities": {
+          "incident-triage": 0.0,
+          "ci-workflow": 0.0,
+          "__no_skill__": 0.0,
+          "log-diagnosis": 0.0,
+          "sql-tuning": 0.0,
+          "accessibility-audit": 0.0,
+          "web-layout": 0.98,
+          "schema-migration": 0.0,
+          "data-cleaning": 0.0,
+          "pdf-extraction": 0.0,
+          "data-charting": 0.0,
+          "code-tests": 0.0,
+          "container-build": 0.0,
+          "__review__": 0.02
+        },
+        "confidence": 0.98,
+        "source": "jev",
+        "reason": "choice",
+        "usage": {
+          "requests": 1,
+          "input_tokens": 963,
+          "output_tokens": 154,
+          "estimated_input_usd": 4.0446e-05
+        }
+      }
+    },
+    {
+      "id": "o21",
+      "expected": "data-cleaning",
+      "predicted": "data-cleaning",
+      "correct": true,
+      "decision": {
+        "outcome": "route",
+        "skill_id": "data-cleaning",
+        "probabilities": {
+          "log-diagnosis": 0.0,
+          "incident-triage": 0.0,
+          "container-build": 0.0,
+          "ci-workflow": 0.0,
+          "accessibility-audit": 0.0,
+          "data-cleaning": 1.0,
+          "schema-migration": 0.0,
+          "code-tests": 0.0,
+          "sql-tuning": 0.0,
+          "data-charting": 0.0,
+          "pdf-extraction": 0.0,
+          "__no_skill__": 0.0,
+          "web-layout": 0.0,
+          "__review__": 0.0
+        },
+        "confidence": 1.0,
+        "source": "jev",
+        "reason": "choice",
+        "usage": {
+          "requests": 1,
+          "input_tokens": 964,
+          "output_tokens": 156,
+          "estimated_input_usd": 4.0488e-05
+        }
+      }
+    },
+    {
+      "id": "o22",
+      "expected": "data-cleaning",
+      "predicted": "data-cleaning",
+      "correct": true,
+      "decision": {
+        "outcome": "route",
+        "skill_id": "data-cleaning",
+        "probabilities": {
+          "incident-triage": 0.0,
+          "sql-tuning": 0.0,
+          "data-charting": 0.0,
+          "schema-migration": 0.0,
+          "accessibility-audit": 0.0,
+          "code-tests": 0.0,
+          "container-build": 0.0,
+          "log-diagnosis": 0.0,
+          "__no_skill__": 0.0,
+          "web-layout": 0.0,
+          "__review__": 0.02,
+          "ci-workflow": 0.0,
+          "pdf-extraction": 0.0,
+          "data-cleaning": 0.98
+        },
+        "confidence": 0.98,
+        "source": "jev",
+        "reason": "choice",
+        "usage": {
+          "requests": 1,
+          "input_tokens": 961,
+          "output_tokens": 156,
+          "estimated_input_usd": 4.0362e-05
+        }
+      }
+    },
+    {
+      "id": "o23",
+      "expected": "data-charting",
+      "predicted": "data-charting",
+      "correct": true,
+      "decision": {
+        "outcome": "route",
+        "skill_id": "data-charting",
+        "probabilities": {
+          "web-layout": 0.0,
+          "ci-workflow": 0.0,
+          "incident-triage": 0.0,
+          "schema-migration": 0.0,
+          "data-charting": 1.0,
+          "__review__": 0.0,
+          "pdf-extraction": 0.0,
+          "accessibility-audit": 0.0,
+          "data-cleaning": 0.0,
+          "log-diagnosis": 0.0,
+          "sql-tuning": 0.0,
+          "code-tests": 0.0,
+          "__no_skill__": 0.0,
+          "container-build": 0.0
+        },
+        "confidence": 0.99,
+        "source": "jev",
+        "reason": "choice",
+        "usage": {
+          "requests": 1,
+          "input_tokens": 962,
+          "output_tokens": 156,
+          "estimated_input_usd": 4.0404e-05
+        }
+      }
+    },
+    {
+      "id": "o24",
+      "expected": "data-charting",
+      "predicted": "data-charting",
+      "correct": true,
+      "decision": {
+        "outcome": "route",
+        "skill_id": "data-charting",
+        "probabilities": {
+          "__review__": 0.0,
+          "incident-triage": 0.0,
+          "data-cleaning": 0.0,
+          "accessibility-audit": 0.0,
+          "web-layout": 0.0,
+          "sql-tuning": 0.0,
+          "code-tests": 0.0,
+          "data-charting": 1.0,
+          "schema-migration": 0.0,
+          "ci-workflow": 0.0,
+          "container-build": 0.0,
+          "__no_skill__": 0.0,
+          "pdf-extraction": 0.0,
+          "log-diagnosis": 0.0
+        },
+        "confidence": 1.0,
+        "source": "jev",
+        "reason": "choice",
+        "usage": {
+          "requests": 1,
+          "input_tokens": 962,
+          "output_tokens": 156,
+          "estimated_input_usd": 4.0404e-05
+        }
+      }
+    },
+    {
+      "id": "o25",
+      "expected": "no_skill",
+      "predicted": "no_skill",
+      "correct": true,
+      "decision": {
+        "outcome": "no_skill",
+        "skill_id": null,
+        "probabilities": {
+          "web-layout": 0.0,
+          "__no_skill__": 1.0,
+          "container-build": 0.0,
+          "schema-migration": 0.0,
+          "data-charting": 0.0,
+          "code-tests": 0.0,
+          "sql-tuning": 0.0,
+          "incident-triage": 0.0,
+          "__review__": 0.0,
+          "accessibility-audit": 0.0,
+          "ci-workflow": 0.0,
+          "pdf-extraction": 0.0,
+          "data-cleaning": 0.0,
+          "log-diagnosis": 0.0
+        },
+        "confidence": 1.0,
+        "source": "jev",
+        "reason": "choice",
+        "usage": {
+          "requests": 1,
+          "input_tokens": 956,
+          "output_tokens": 156,
+          "estimated_input_usd": 4.0152e-05
+        }
+      }
+    },
+    {
+      "id": "o26",
+      "expected": "no_skill",
+      "predicted": "no_skill",
+      "correct": true,
+      "decision": {
+        "outcome": "no_skill",
+        "skill_id": null,
+        "probabilities": {
+          "web-layout": 0.0,
+          "schema-migration": 0.0,
+          "ci-workflow": 0.0,
+          "__review__": 0.01,
+          "data-charting": 0.0,
+          "data-cleaning": 0.0,
+          "pdf-extraction": 0.0,
+          "sql-tuning": 0.0,
+          "code-tests": 0.0,
+          "log-diagnosis": 0.0,
+          "__no_skill__": 0.99,
+          "accessibility-audit": 0.0,
+          "container-build": 0.0,
+          "incident-triage": 0.0
+        },
+        "confidence": 0.98,
+        "source": "jev",
+        "reason": "choice",
+        "usage": {
+          "requests": 1,
+          "input_tokens": 956,
+          "output_tokens": 156,
+          "estimated_input_usd": 4.0152e-05
+        }
+      }
+    },
+    {
+      "id": "o27",
+      "expected": "no_skill",
+      "predicted": "no_skill",
+      "correct": true,
+      "decision": {
+        "outcome": "no_skill",
+        "skill_id": null,
+        "probabilities": {
+          "schema-migration": 0.0,
+          "pdf-extraction": 0.0,
+          "ci-workflow": 0.0,
+          "log-diagnosis": 0.0,
+          "data-charting": 0.0,
+          "data-cleaning": 0.0,
+          "container-build": 0.0,
+          "__no_skill__": 1.0,
+          "sql-tuning": 0.0,
+          "code-tests": 0.0,
+          "accessibility-audit": 0.0,
+          "incident-triage": 0.0,
+          "__review__": 0.0,
+          "web-layout": 0.0
+        },
+        "confidence": 0.99,
+        "source": "jev",
+        "reason": "choice",
+        "usage": {
+          "requests": 1,
+          "input_tokens": 961,
+          "output_tokens": 156,
+          "estimated_input_usd": 4.0362e-05
+        }
+      }
+    },
+    {
+      "id": "o28",
+      "expected": "no_skill",
+      "predicted": "no_skill",
+      "correct": true,
+      "decision": {
+        "outcome": "no_skill",
+        "skill_id": null,
+        "probabilities": {
+          "sql-tuning": 0.0,
+          "container-build": 0.0,
+          "__review__": 0.01,
+          "data-cleaning": 0.0,
+          "log-diagnosis": 0.0,
+          "data-charting": 0.0,
+          "__no_skill__": 0.99,
+          "incident-triage": 0.0,
+          "pdf-extraction": 0.0,
+          "ci-workflow": 0.0,
+          "code-tests": 0.0,
+          "accessibility-audit": 0.0,
+          "web-layout": 0.0,
+          "schema-migration": 0.0
+        },
+        "confidence": 0.99,
+        "source": "jev",
+        "reason": "choice",
+        "usage": {
+          "requests": 1,
+          "input_tokens": 958,
+          "output_tokens": 156,
+          "estimated_input_usd": 4.0236e-05
+        }
+      }
+    },
+    {
+      "id": "o29",
+      "expected": "no_skill",
+      "predicted": "no_skill",
+      "correct": true,
+      "decision": {
+        "outcome": "no_skill",
+        "skill_id": null,
+        "probabilities": {
+          "__review__": 0.04,
+          "schema-migration": 0.0,
+          "data-cleaning": 0.0,
+          "web-layout": 0.0,
+          "data-charting": 0.0,
+          "ci-workflow": 0.0,
+          "sql-tuning": 0.0,
+          "incident-triage": 0.0,
+          "accessibility-audit": 0.0,
+          "pdf-extraction": 0.0,
+          "code-tests": 0.0,
+          "container-build": 0.0,
+          "__no_skill__": 0.96,
+          "log-diagnosis": 0.0
+        },
+        "confidence": 0.96,
+        "source": "jev",
+        "reason": "choice",
+        "usage": {
+          "requests": 1,
+          "input_tokens": 957,
+          "output_tokens": 156,
+          "estimated_input_usd": 4.0194e-05
+        }
+      }
+    },
+    {
+      "id": "o30",
+      "expected": "no_skill",
+      "predicted": "no_skill",
+      "correct": true,
+      "decision": {
+        "outcome": "no_skill",
+        "skill_id": null,
+        "probabilities": {
+          "__no_skill__": 1.0,
+          "__review__": 0.0,
+          "schema-migration": 0.0,
+          "web-layout": 0.0,
+          "data-charting": 0.0,
+          "container-build": 0.0,
+          "ci-workflow": 0.0,
+          "data-cleaning": 0.0,
+          "log-diagnosis": 0.0,
+          "incident-triage": 0.0,
+          "code-tests": 0.0,
+          "sql-tuning": 0.0,
+          "accessibility-audit": 0.0,
+          "pdf-extraction": 0.0
+        },
+        "confidence": 1.0,
+        "source": "jev",
+        "reason": "choice",
+        "usage": {
+          "requests": 1,
+          "input_tokens": 966,
+          "output_tokens": 156,
+          "estimated_input_usd": 4.0572e-05
+        }
+      }
+    },
+    {
+      "id": "o31",
+      "expected": "review",
+      "predicted": "review",
+      "correct": true,
+      "decision": {
+        "outcome": "review",
+        "skill_id": null,
+        "probabilities": {
+          "accessibility-audit": 0.0,
+          "data-cleaning": 0.0,
+          "schema-migration": 0.0,
+          "ci-workflow": 0.0,
+          "container-build": 0.0,
+          "web-layout": 0.0,
+          "__no_skill__": 0.02,
+          "incident-triage": 0.0,
+          "__review__": 0.98,
+          "data-charting": 0.0,
+          "code-tests": 0.0,
+          "pdf-extraction": 0.0,
+          "sql-tuning": 0.0,
+          "log-diagnosis": 0.0
+        },
+        "confidence": 0.98,
+        "source": "jev",
+        "reason": "choice",
+        "usage": {
+          "requests": 1,
+          "input_tokens": 957,
+          "output_tokens": 155,
+          "estimated_input_usd": 4.0194e-05
+        }
+      }
+    },
+    {
+      "id": "o32",
+      "expected": "review",
+      "predicted": "review",
+      "correct": true,
+      "decision": {
+        "outcome": "review",
+        "skill_id": null,
+        "probabilities": {
+          "log-diagnosis": 0.0,
+          "ci-workflow": 0.0,
+          "web-layout": 0.0,
+          "__review__": 0.99,
+          "incident-triage": 0.0,
+          "data-charting": 0.0,
+          "container-build": 0.0,
+          "data-cleaning": 0.0,
+          "sql-tuning": 0.01,
+          "accessibility-audit": 0.0,
+          "code-tests": 0.0,
+          "schema-migration": 0.0,
+          "__no_skill__": 0.0,
+          "pdf-extraction": 0.0
+        },
+        "confidence": 0.99,
+        "source": "jev",
+        "reason": "choice",
+        "usage": {
+          "requests": 1,
+          "input_tokens": 969,
+          "output_tokens": 155,
+          "estimated_input_usd": 4.0698e-05
+        }
+      }
+    },
+    {
+      "id": "o33",
+      "expected": "review",
+      "predicted": "review",
+      "correct": true,
+      "decision": {
+        "outcome": "review",
+        "skill_id": null,
+        "probabilities": {
+          "container-build": 0.0,
+          "data-cleaning": 0.0,
+          "__review__": 0.93,
+          "log-diagnosis": 0.0,
+          "code-tests": 0.0,
+          "__no_skill__": 0.07,
+          "accessibility-audit": 0.0,
+          "incident-triage": 0.0,
+          "schema-migration": 0.0,
+          "web-layout": 0.0,
+          "pdf-extraction": 0.0,
+          "ci-workflow": 0.0,
+          "sql-tuning": 0.0,
+          "data-charting": 0.0
+        },
+        "confidence": 0.93,
+        "source": "jev",
+        "reason": "choice",
+        "usage": {
+          "requests": 1,
+          "input_tokens": 959,
+          "output_tokens": 155,
+          "estimated_input_usd": 4.0278e-05
+        }
+      }
+    },
+    {
+      "id": "o34",
+      "expected": "review",
+      "predicted": "review",
+      "correct": true,
+      "decision": {
+        "outcome": "review",
+        "skill_id": null,
+        "probabilities": {
+          "__review__": 0.99,
+          "log-diagnosis": 0.0,
+          "sql-tuning": 0.0,
+          "pdf-extraction": 0.0,
+          "accessibility-audit": 0.0,
+          "schema-migration": 0.0,
+          "__no_skill__": 0.01,
+          "web-layout": 0.0,
+          "code-tests": 0.0,
+          "container-build": 0.0,
+          "incident-triage": 0.0,
+          "data-cleaning": 0.0,
+          "data-charting": 0.0,
+          "ci-workflow": 0.0
+        },
+        "confidence": 0.98,
+        "source": "jev",
+        "reason": "choice",
+        "usage": {
+          "requests": 1,
+          "input_tokens": 962,
+          "output_tokens": 155,
+          "estimated_input_usd": 4.0404e-05
+        }
+      }
+    },
+    {
+      "id": "o35",
+      "expected": "review",
+      "predicted": "review",
+      "correct": true,
+      "decision": {
+        "outcome": "review",
+        "skill_id": null,
+        "probabilities": {
+          "container-build": 0.0,
+          "sql-tuning": 0.0,
+          "ci-workflow": 0.0,
+          "__review__": 0.93,
+          "incident-triage": 0.0,
+          "log-diagnosis": 0.0,
+          "data-cleaning": 0.0,
+          "accessibility-audit": 0.0,
+          "data-charting": 0.0,
+          "web-layout": 0.0,
+          "__no_skill__": 0.0,
+          "schema-migration": 0.0,
+          "code-tests": 0.07,
+          "pdf-extraction": 0.0
+        },
+        "confidence": 0.92,
+        "source": "jev",
+        "reason": "choice",
+        "usage": {
+          "requests": 1,
+          "input_tokens": 963,
+          "output_tokens": 155,
+          "estimated_input_usd": 4.0446e-05
+        }
+      }
+    },
+    {
+      "id": "o36",
+      "expected": "review",
+      "predicted": "review",
+      "correct": true,
+      "decision": {
+        "outcome": "review",
+        "skill_id": null,
+        "probabilities": {
+          "__review__": 0.87,
+          "__no_skill__": 0.13,
+          "accessibility-audit": 0.0,
+          "data-charting": 0.0,
+          "ci-workflow": 0.0,
+          "container-build": 0.0,
+          "pdf-extraction": 0.0,
+          "log-diagnosis": 0.0,
+          "incident-triage": 0.0,
+          "schema-migration": 0.0,
+          "data-cleaning": 0.0,
+          "sql-tuning": 0.0,
+          "code-tests": 0.0,
+          "web-layout": 0.0
+        },
+        "confidence": 0.86,
+        "source": "jev",
+        "reason": "choice",
+        "usage": {
+          "requests": 1,
+          "input_tokens": 959,
+          "output_tokens": 155,
+          "estimated_input_usd": 4.0278e-05
+        }
+      }
+    }
+  ]
+}
