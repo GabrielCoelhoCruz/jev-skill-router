@@ -158,7 +158,15 @@ class RouterTests(unittest.TestCase):
         for request, catalogue, expected_hash in cases:
             with self.subTest(request=request), local_api(choice_response()) as received:
                 route(request, catalogue, api_key="fake-test-key")
-            self.assertEqual(hashlib.sha256(received.raw[0]).hexdigest(), expected_hash)
+            payload = json.loads(received.raw[0])
+            criteria = payload["questions"]["route"]["criteria"]
+            self.assertEqual(criteria["__no_skill__"],
+                             "No concrete task or artifact is requested; an ordinary answer or conversation needs no specialist workflow.")
+            self.assertEqual(criteria["__review__"],
+                             "A concrete task or artifact is requested but no listed skill supports its deliverable, or the goal is ambiguous or equally spans multiple skills.")
+            criteria["__no_skill__"] = "An ordinary answer needs no specialist workflow."
+            criteria["__review__"] = "The goal is ambiguous, several workflows are equally primary, or no listed skill supports this specialist task."
+            self.assertEqual(hashlib.sha256(json.dumps(payload).encode()).hexdigest(), expected_hash)
 
     def test_local_http_uncertainty_missing_usage_and_invalid_schema(self):
         with local_api(choice_response(confidence=0.4, usage=False)):

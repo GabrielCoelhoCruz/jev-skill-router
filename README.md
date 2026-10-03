@@ -5,8 +5,6 @@ Choose a specialist workflow for a request without loading or executing a skill.
 With `TYPESAFE_API_KEY` in the process environment, the router sends the request and catalogue descriptions to [TypeSafe Jev](https://docs.typesafe.ai/api.md). A missing key, failed request, mismatched model, or invalid response produces `review`, rather than a lexical route. `--dry-run` is a separate, network-free lexical baseline, even when a key is set. The `source` and `reason` fields explain the decision. Jev probabilities represent option mass, and `confidence` is a concentration value. Neither is calibrated correctness. Dry-run scores are normalized for display and are not model probabilities.
 The router accepts a Jev probability sum within 0.02 of one and normalizes the returned distribution. This handles small rounding errors; larger schema errors still require review.
 
-The router accepts a Jev probability sum within 0.02 of one and normalizes the returned distribution. This handles small rounding errors; larger schema errors still require review.
-
 ## Scope and evidence
 
 This branch keeps the original catalogue, model, thresholds, and provider prompt. It changes failure handling and evaluation, not the routing policy. Its provider request bytes match the original public base in local fake-server checks. The same outputs are not guaranteed because the parser and API-failure behavior changed.
