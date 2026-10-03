@@ -1,11 +1,14 @@
 """Skill choice without skill execution. Python 3.11+ standard library only."""
 
 import argparse
+import hashlib
 import json
 import math
 import os
 import re
+import subprocess
 import sys
+import time
 import urllib.error
 import urllib.request
 from collections import Counter
@@ -38,6 +41,8 @@ def catalogue_from(raw):
         examples = skill["examples"]
         if not isinstance(examples, list) or not 1 <= len(examples) <= 5 or any(not isinstance(e, str) or not e.strip() or len(e) > 160 for e in examples):
             raise InputError(f"{identifier}: examples must be 1..5 nonempty strings of at most 160 characters")
+        if len(set(examples)) != len(examples):
+            raise InputError(f"{identifier}: examples must be distinct")
     return sorted(raw, key=lambda s: s["id"])
 
 
@@ -89,6 +94,10 @@ def decision(choice, probabilities, confidence, source, reason, calls, input_tok
                                  "estimated_input_usd": round(input_tokens * INPUT_USD_PER_MILLION / 1_000_000, 12) if input_tokens is not None else None}}
 
 
+def api_review(reason):
+    return decision("__review__", {}, None, "api", reason, 1, None, None)
+
+
 def jev(request, catalogue, api_key, model=MODEL):
     criteria = {s["id"]: s["description"] + " Examples: " + "; ".join(s["examples"]) for s in catalogue}
     criteria["__no_skill__"] = "An ordinary answer needs no specialist workflow."
@@ -111,29 +120,39 @@ def jev(request, catalogue, api_key, model=MODEL):
         probabilities = answer["probabilities"]
         choice = answer["choice"]
         confidence = answer["confidence"]
-        usage = raw["usage"]
-        if raw["model"] != model or answer["type"] != "choice" or not isinstance(probabilities, dict) or set(probabilities) != set(criteria):
-            raise ValueError("unexpected model, type or options")
+        usage = raw.get("usage")
+        if raw["model"] != model:
+            return api_review("api_model_mismatch")
+        if answer["type"] != "choice" or not isinstance(probabilities, dict) or set(probabilities) != set(criteria):
+            raise ValueError("unexpected type or options")
         if not all(type(p) in (int, float) and math.isfinite(p) and 0 <= p <= 1 for p in probabilities.values()) or abs(sum(probabilities.values()) - 1) > 0.001:
             raise ValueError("invalid distribution")
         if choice not in probabilities or probabilities[choice] < max(probabilities.values()) - 1e-9 or type(confidence) not in (int, float) or not math.isfinite(confidence) or not 0 <= confidence <= 1:
             raise ValueError("invalid choice or confidence")
-        if not isinstance(usage, dict) or any(type(usage.get(k)) is not int or usage[k] < 0 for k in ("input_tokens", "output_tokens")):
-            raise ValueError("missing or invalid token usage")
+        if usage is not None and (not isinstance(usage, dict) or any(type(usage.get(k)) is not int or usage[k] < 0 for k in ("input_tokens", "output_tokens"))):
+            raise ValueError("invalid token usage")
+        input_tokens = usage["input_tokens"] if usage is not None else None
+        output_tokens = usage["output_tokens"] if usage is not None else None
         if choice not in SENTINELS and (confidence < 0.55 or probabilities[choice] < 0.55):
-            return decision("__review__", probabilities, confidence, "jev", "uncertain", 1, usage["input_tokens"], usage["output_tokens"])
-        return decision(choice, probabilities, confidence, "jev", "choice", 1, usage["input_tokens"], usage["output_tokens"])
+            return decision("__review__", probabilities, confidence, "jev", "uncertain", 1, input_tokens, output_tokens)
+        return decision(choice, probabilities, confidence, "jev", "model_choice", 1, input_tokens, output_tokens)
     except urllib.error.HTTPError as error:
-        return lexical(request, catalogue, f"api_http_{error.code}") | {"usage": {"requests": 1, "input_tokens": None, "output_tokens": None, "estimated_input_usd": None}}
-    except (urllib.error.URLError, TimeoutError, OSError, ValueError, KeyError, TypeError, UnicodeError, json.JSONDecodeError):
-        return lexical(request, catalogue, "api_unavailable_or_invalid") | {"usage": {"requests": 1, "input_tokens": None, "output_tokens": None, "estimated_input_usd": None}}
+        return api_review(f"api_http_{error.code}")
+    except (urllib.error.URLError, TimeoutError, OSError):
+        return api_review("api_unavailable")
+    except (ValueError, KeyError, TypeError, UnicodeError):
+        return api_review("api_invalid_response")
 
 
 def route(request, catalogue, *, dry_run=False, api_key=None, model=MODEL):
     validate_request(request)
     catalogue = catalogue_from(catalogue)
-    if dry_run or not api_key:
-        return lexical(request, catalogue, "dry_run" if dry_run else "missing_api_key")
+    if not isinstance(model, str) or not re.fullmatch(r"jev-[A-Za-z0-9._-]+", model):
+        raise InputError("--model must be a Jev model identifier")
+    if dry_run:
+        return lexical(request, catalogue, "dry_run")
+    if not api_key:
+        return decision("__review__", {}, None, "validation", "missing_api_key", 0, 0, 0)
     if not isinstance(api_key, str) or any(ord(char) < 33 or ord(char) > 126 for char in api_key):
         raise InputError("TYPESAFE_API_KEY contains invalid characters; set a printable ASCII key")
     return jev(request, catalogue, api_key, model)
@@ -152,25 +171,44 @@ def evaluate(cases, catalogue, *, dry_run=False, api_key=None, model=MODEL):
         validate_request(case["request"])
         ids.add(case["id"])
     for case in cases:
+        started = time.perf_counter()
         outcome = route(case["request"], catalogue, dry_run=dry_run, api_key=api_key, model=model)
         predicted = outcome["skill_id"] or outcome["outcome"]
         results.append({"id": case["id"], "expected": case["expected"], "predicted": predicted,
-                        "correct": predicted == case["expected"], "decision": outcome})
+                        "correct": predicted == case["expected"], "latency_ms": round((time.perf_counter() - started) * 1000, 3),
+                        "decision": outcome})
     count = Counter(r["predicted"] for r in results)
     calls = sum(r["decision"]["usage"]["requests"] for r in results)
     usages = [r["decision"]["usage"] for r in results]
     known_input = sum(u["input_tokens"] or 0 for u in usages)
     known_output = sum(u["output_tokens"] or 0 for u in usages)
     complete = all(u["input_tokens"] is not None and u["output_tokens"] is not None for u in usages)
+    expected_routes = sum(r["expected"] not in ("no_skill", "review") for r in results)
+    correct_routes = sum(r["correct"] and r["predicted"] not in ("no_skill", "review") for r in results)
+    predicted_routes = sum(r["predicted"] not in ("no_skill", "review") for r in results)
+    labels = sorted(valid_labels)
+    confusion = {expected: {predicted: sum(r["expected"] == expected and r["predicted"] == predicted for r in results)
+                            for predicted in labels} for expected in labels}
     return {"summary": {"cases": len(results), "correct": sum(r["correct"] for r in results),
                          "accuracy": sum(r["correct"] for r in results) / len(results),
-                         "wrong_routes": sum(r["predicted"] not in ("no_skill", "review") and not r["correct"] for r in results),
+                         "wrong_routes": predicted_routes - correct_routes,
                          "reviews": count["review"], "unnecessary_reviews": sum(r["predicted"] == "review" and r["expected"] != "review" for r in results),
+                         "wrong_routes_denominator": len(results),
+                         "unnecessary_reviews_denominator": sum(r["expected"] != "review" for r in results),
+                         "automatic_route_coverage": {"numerator": predicted_routes, "denominator": len(results)},
+                         "route_recall": {"numerator": correct_routes, "denominator": expected_routes},
                          "fallbacks": sum(r["decision"]["source"] == "lexical" for r in results),
+                         "api_failures": sum(r["decision"]["source"] == "api" and r["decision"]["reason"] not in ("api_invalid_response", "api_model_mismatch") for r in results),
+                         "invalid_responses": sum(r["decision"]["reason"] in ("api_invalid_response", "api_model_mismatch") for r in results),
                          "api_requests": calls, "known_input_tokens": known_input, "known_output_tokens": known_output,
+                         "api_errors_denominator": calls,
+                         "unknown_usage_cases": len(usages) - sum(u["input_tokens"] is not None and u["output_tokens"] is not None for u in usages),
                          "token_usage_complete": complete,
                          "estimated_input_usd": round(known_input * INPUT_USD_PER_MILLION / 1_000_000, 12) if complete else None,
-                         "known_input_usd_lower_bound": round(known_input * INPUT_USD_PER_MILLION / 1_000_000, 12)},
+                         "known_input_usd_lower_bound": round(known_input * INPUT_USD_PER_MILLION / 1_000_000, 12),
+                         "observed_latency_ms": round(sum(r["latency_ms"] for r in results), 3),
+                         "mean_latency_ms": round(sum(r["latency_ms"] for r in results) / len(results), 3)},
+            "confusion": confusion,
             "cases": results}
 
 
@@ -191,13 +229,30 @@ def main(argv=None):
     try:
         if not re.fullmatch(r"jev-[A-Za-z0-9._-]+", args.model):
             raise InputError("--model must be a Jev model identifier")
-        catalogue = catalogue_from(json.loads(Path(args.catalogue).read_text()))
+        catalogue_bytes = Path(args.catalogue).read_bytes()
+        catalogue = catalogue_from(json.loads(catalogue_bytes))
         key = None if args.dry_run else os.environ.get("TYPESAFE_API_KEY")
         if args.command == "route":
             report = route(args.request, catalogue, dry_run=args.dry_run, api_key=key, model=args.model)
         else:
-            cases = [json.loads(line) for line in Path(args.dataset).read_text().splitlines() if line.strip()]
+            dataset_bytes = Path(args.dataset).read_bytes()
+            cases = [json.loads(line) for line in dataset_bytes.decode().splitlines() if line.strip()]
             report = evaluate(cases, catalogue, dry_run=args.dry_run, api_key=key, model=args.model)
+            revision = subprocess.run(["git", "rev-parse", "HEAD"], cwd=Path(__file__).resolve().parent,
+                                      capture_output=True, text=True, check=False)
+            changes = subprocess.run(["git", "status", "--porcelain", "--untracked-files=no"], cwd=Path(__file__).resolve().parent,
+                                     capture_output=True, text=True, check=False)
+            settings = {"model": args.model, "dry_run": args.dry_run, "endpoint": ENDPOINT,
+                        "input_usd_per_million": INPUT_USD_PER_MILLION,
+                        "route_min_confidence": 0.55, "route_min_probability": 0.55,
+                        "no_cache": True, "no_retries": True,
+                        "router_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest()}
+            report["provenance"] = {"source_commit": revision.stdout.strip() if revision.returncode == 0 else None,
+                                    "source_dirty": bool(changes.stdout.strip()) if changes.returncode == 0 else None,
+                                    "catalogue_sha256": hashlib.sha256(catalogue_bytes).hexdigest(),
+                                    "dataset_sha256": hashlib.sha256(dataset_bytes).hexdigest(),
+                                    "config_sha256": hashlib.sha256(json.dumps(settings, sort_keys=True).encode()).hexdigest(),
+                                    "settings": settings}
             if args.output:
                 with Path(args.output).open("x") as out:
                     json.dump(report, out, indent=2)
