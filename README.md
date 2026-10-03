@@ -8,9 +8,33 @@ The router accepts a Jev probability sum within 0.02 of one and normalizes the r
 
 ## Scope and evidence
 
-This branch keeps the original catalogue, model, thresholds, and provider prompt. It changes failure handling and evaluation, not the routing policy. Its provider request bytes match the original public base in local fake-server checks. The same outputs are not guaranteed because the parser and API-failure behavior changed.
+The published-main runtime at commit `37a05e2ad3edb145f47ccaffdbc151c5b37856d0` keeps the original catalogue, model, thresholds, and provider prompt. Its source SHA-256 is `cff71463063cfc572f935feaf67fb03e5cc30d9469f25c59cbcf08d0cdc5eee2`. Its failure handling and evaluation differ from the original base, although local fake-server checks found identical provider request bytes. This branch adds a benchmark and documentation without changing that runtime.
 
-The separate prompt-optimization experiment at `b5dc848a0a985b0c6135ae1190b29d5d7ba59541` failed its declared quality goal on a synthetic final set. Against base `fcbde53efe0e7ec871f171a268e97b7402ba10ae`, that exact experimental head had 351/360 versus 341/360 exact actions and 3 versus 9 wrong routes. But unnecessary reviews rose from 2/288 to 3/288, and correct skill choices fell from 286/288 to 285/288. Those are correlated synthetic observations, not production validation. The prompt change is excluded here. This safety branch has not been scored on that final set and makes no semantic-routing improvement claim.
+On October 3, 2026, that exact published-main runtime selected the expected action in **347/360** live observations of 120 previously used, owner-written synthetic requests repeated three times. It selected the correct skill in 285/288 skill-labeled observations, routed a skill on 294/360 observations, made nine wrong skill routes against review labels, and made three unnecessary reviews among 288 observations expected to route a skill. The three repeat scores were 116/120, 115/120, and 116/120. All 360 planned API attempts returned valid decisions; this sample had zero operational failures. Six separately authored ordinary-answer requests produced six `no_skill` answers, but they do not enter the 360-observation score. The weak lexical overlap comparator scored 31/120 on the same 120 requests, with no API calls. It is not a best-free baseline.
+
+The original 120 requests are known from an earlier evaluation. They are not fresh heldout data, human-labeled traffic, or evidence of production accuracy. The 60 paired families and three repeats are correlated. A fixed-seed family-resampling interval for the exact-action rate is 91.94% to 99.72%; that interval describes this synthetic corpus, not production traffic. Observed routing latency was 360.284 ms at P50 and 421.007 ms at P95. Returned usage for the 360 attempts was complete: 350,784 input tokens and 56,027 output tokens. At TypeSafe's [published Jev 1.13 input rate](https://docs.typesafe.ai/models.md) of $0.042 per million input tokens, the input-only estimate is $0.014732928, not an invoice. Total charged cost is not established here. The six controls used another 5,752 input tokens, or $0.000241584 at the same rate. The agent model runs on Gabriel's Codex subscription; no numerical agent-model bill is claimed.
+
+The separate prompt-optimization experiment at `b5dc848a0a985b0c6135ae1190b29d5d7ba59541` failed its declared quality goal on a synthetic final set. Against base `fcbde53efe0e7ec871f171a268e97b7402ba10ae`, that exact experimental head had 351/360 versus 341/360 exact actions and 3 versus 9 wrong routes. But unnecessary reviews rose from 2/288 to 3/288, and correct skill choices fell from 286/288 to 285/288. Those are correlated synthetic observations, not production validation. The prompt change is excluded here. Neither historical score belongs to the published-main runtime measured above. This branch makes no semantic-routing improvement claim.
+
+## Replay the measured results offline
+
+`benchmark/PROTOCOL.md` froze the plan and six ordinary controls before the live calls. `benchmark/known-120.jsonl` and `benchmark/metadata.json` preserve the owner-original corpus bytes. `benchmark/live-360.jsonl` and `benchmark/ordinary-6-results.jsonl` hold sanitized decisions and latency for each attempted request; they contain no credentials, headers, or raw HTTP bodies. The committed `benchmark/summary.json` comes from the command below.
+
+```sh
+python3 benchmark.py > /tmp/jev-main-replay.json
+cmp benchmark/summary.json /tmp/jev-main-replay.json
+python3 -m unittest discover -s tests -v
+```
+
+Replay needs no key or network. It pins the runtime, catalogue, corpus, and metadata hashes. It rejects a missing, duplicate, unexpected, or zero-attempt observation instead of shrinking the denominator. It recomputes exact actions, skill selection, wrong routes, ordinary `no_skill` controls, usage, latency, per-repeat scores, and fixed-seed family variability from the included records. The test suite deliberately removes and duplicates a stored record to check rejection. A saved Jev decision cannot prove how the provider made it, so the original live runner froze the runtime hash and wrote each decision immediately after its one attempt. The ordinary controls have a separate denominator of six.
+
+To make **new** live calls, review the requests and catalogue before sending them to TypeSafe. The following command makes 360 planned calls, three repetitions of each of the 120 known synthetic requests, with no retry or cache. It writes a new CLI report, not the archived streaming JSONL records, and its scores may differ from the October 3 run.
+
+```sh
+python3 router.py eval --dataset benchmark/known-120.jsonl --metadata benchmark/metadata.json --repeats 3 --output /tmp/jev-new-live.json
+```
+
+Set `TYPESAFE_API_KEY` in the process environment before this command. Do not use `--dry-run` for live measurement. `router.py eval --dry-run` remains a network-free lexical demonstration.
 
 ## Run locally
 

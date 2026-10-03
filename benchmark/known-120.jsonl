@@ -1,0 +1,120 @@
+{"id":"test-001","request":"Transcribe the handwritten names and dates from the scanned birth-register PDF, retaining the folio number for each entry.","expected":"pdf-extraction"}
+{"id":"test-002","request":"Tenho registros antigos de nascimento fotografados e reunidos em PDF. Quero os nomes e a página de cada registro.","expected":"pdf-extraction"}
+{"id":"test-003","request":"The grant appendix is a PDF with selectable text. Pull its budget table into rows and cite the page beside each row.","expected":"pdf-extraction"}
+{"id":"test-004","request":"No anexo da bolsa em PDF, localize e transcreva os parágrafos sobre despesas elegíveis, com indicação das páginas.","expected":"pdf-extraction"}
+{"id":"test-005","request":"The warehouse sent twelve receipt PDFs with faded stamps. Read the quantities and item codes from the scans.","expected":"pdf-extraction"}
+{"id":"test-006","request":"Extraia os números dos comprovantes digitalizados em PDF, mesmo quando a tinta aparece fraca; mantenha a referência da folha.","expected":"pdf-extraction"}
+{"id":"test-007","request":"Quote the testimony text at the specified page references in this hearing transcript PDF. Do not redesign the transcript.","expected":"pdf-extraction"}
+{"id":"test-008","request":"O arquivo da audiência está em PDF. Preciso só da fala da testemunha e da página; a nota 'refazer o visual' é um trecho citado, não um pedido.","expected":"pdf-extraction"}
+{"id":"test-009","request":"The payment gateway trace ends with a rejected callback. Which exception chain explains the rejected response? The outage ended yesterday.","expected":"log-diagnosis"}
+{"id":"test-010","request":"No registro do processador de pagamentos, encontre o erro que levou à recusa do retorno. Não há incidente em curso.","expected":"log-diagnosis"}
+{"id":"test-011","request":"A search service returned intermittent 503s last week. Analyze the event trace to locate the failing component, not a response plan.","expected":"log-diagnosis"}
+{"id":"test-012","request":"Examine os eventos de busca e diga de onde vem o 503. O texto 'avisar clientes agora' está dentro do log anexado.","expected":"log-diagnosis"}
+{"id":"test-013","request":"This nightly import exits after row 400; follow the stack frames to explain the failure, please.","expected":"log-diagnosis"}
+{"id":"test-014","request":"O lote de importação cai perto do final. Leai o rastreio de exceção e diga qual operação estourou.","expected":"log-diagnosis"}
+{"id":"test-015","request":"Correlate the authentication error timestamps with the request trace and diagnose why valid sessions were rejected yesterday.","expected":"log-diagnosis"}
+{"id":"test-016","request":"Nos eventos de autenticação de ontem, identifique a sequência que fez sessões válidas falharem. Não preciso de comunicação de crise.","expected":"log-diagnosis"}
+{"id":"test-017","request":"Our public API is throttling every client right now. Assign containment steps, determine who is affected, and draft an update.","expected":"incident-triage"}
+{"id":"test-018","request":"A API começou a devolver limite de acesso para todos há poucos minutos. Organize a resposta e o aviso aos integradores.","expected":"incident-triage"}
+{"id":"test-019","request":"Notifications are delayed live across three regions; coordinate owners, immediate mitigation, and an impact statement.","expected":"incident-triage"}
+{"id":"test-020","request":"As notificações estão atrasadas agora. Prepare a contenção e uma mensagem de estado para quem depende delas.","expected":"incident-triage"}
+{"id":"test-021","request":"Users cannot sign in at this moment. Run the incident response, estimate impact, and prepare a stakeholder update.","expected":"incident-triage"}
+{"id":"test-022","request":"O acesso às contas falha neste instante. Defina prioridades da equipe e o que informar aos usuários, sem investigar um log isolado.","expected":"incident-triage"}
+{"id":"test-023","request":"Inventory synchronization stopped in production thirty minutes ago and orders are piling up. Coordinate containment and status reporting.","expected":"incident-triage"}
+{"id":"test-024","request":"Os estoques pararam de sincronizar e há pedidos afetados agora. Precisamos comandar a resposta e publicar atualizações.","expected":"incident-triage"}
+{"id":"test-025","request":"Speed up the existing finance aggregate using its query plan; retain the exact totals and existing schema.","expected":"sql-tuning"}
+{"id":"test-026","request":"O fechamento financeiro demora para calcular os totais. Analise o plano da consulta e reduza o tempo sem mudar os números.","expected":"sql-tuning"}
+{"id":"test-027","request":"The appointment lookup performs a full scan for one patient. Recommend an index or predicate improvement for that query.","expected":"sql-tuning"}
+{"id":"test-028","request":"O sistema leva oito segundos para achar um horário livre. Ajuste a busca no banco, preservando as tabelas e o resultado.","expected":"sql-tuning"}
+{"id":"test-029","request":"An event feed SELECT sorts a large intermediate result. Use EXPLAIN to make the current ordering faster.","expected":"sql-tuning"}
+{"id":"test-030","request":"A consulta do feed ordena registros demais antes de limitar a página. Melhore esse acesso sem alterar o esquema.","expected":"sql-tuning"}
+{"id":"test-031","request":"The tenant filter has become slow at scale. Tune the existing SQL join and indexes without a data migration.","expected":"sql-tuning"}
+{"id":"test-032","request":"Investigue por que o SELECT por empresa varre tantas linhas e melhore sua execução. A frase 'criar coluna nova' é só texto num comentário da consulta.","expected":"sql-tuning"}
+{"id":"test-033","request":"Plan retirement of an obsolete account-state enum value with a staged database migration and rollback.","expected":"schema-migration"}
+{"id":"test-034","request":"Precisamos retirar um valor antigo do campo de situação da conta. Descreva a transição dos dados e como voltar atrás.","expected":"schema-migration"}
+{"id":"test-035","request":"Make the delivery address column required after backfilling missing records; sequence the schema rollout safely.","expected":"schema-migration"}
+{"id":"test-036","request":"O campo de endereço ainda aceita vazio. Planeje o preenchimento dos registros antigos antes da restrição no banco.","expected":"schema-migration"}
+{"id":"test-037","request":"Split contact details into their own table, preserving existing rows and offering a rollback path.","expected":"schema-migration"}
+{"id":"test-038","request":"Separe os telefones de clientes em outra tabela e migre os dados já existentes; não se trata de uma consulta lenta.","expected":"schema-migration"}
+{"id":"test-039","request":"Stage the new customer reference column and its backing index without locking writes during deployment.","expected":"schema-migration"}
+{"id":"test-040","request":"Preciso incluir uma chave de referência e um índice na tabela de clientes. Planeje a implantação e reversão dessa mudança estrutural.","expected":"schema-migration"}
+{"id":"test-041","request":"Reorder dependency installs in a multi-stage Dockerfile so the application image can build with cached layers.","expected":"container-build"}
+{"id":"test-042","request":"A cada alteração de código, a imagem reinstala todos os pacotes. Ajuste a ordem das camadas na receita do contêiner.","expected":"container-build"}
+{"id":"test-043","request":"The ARM64 image cannot find its native binary at startup. Fix the target-platform stage and runtime copy in the Dockerfile.","expected":"container-build"}
+{"id":"test-044","request":"A imagem para ARM não sobe porque a etapa final carrega o executável de outra arquitetura. Corrija a montagem da imagem.","expected":"container-build"}
+{"id":"test-045","request":"The process inside the container gets permission denied on its working directory. Repair the image's user and ownership setup.","expected":"container-build"}
+{"id":"test-046","request":"Ao iniciar o contêiner, o usuário interno não consegue ler os arquivos copiados. Ajuste as permissões na construção da imagem.","expected":"container-build"}
+{"id":"test-047","request":"The release binary is present in the builder stage but absent from the runtime image. Repair the COPY step, not the CI job.","expected":"container-build"}
+{"id":"test-048","request":"A etapa final do Dockerfile não recebe os artefatos da compilação. Arrume a cópia e mantenha o pipeline como está.","expected":"container-build"}
+{"id":"test-049","request":"A hosted runner loses the working directory between CI steps. Fix the job configuration so later steps find the checkout.","expected":"ci-workflow"}
+{"id":"test-050","request":"O executor da integração contínua inicia em outra pasta e não encontra o projeto. Corrija os passos do job.","expected":"ci-workflow"}
+{"id":"test-051","request":"The release workflow cannot publish because its token lacks package permissions. Correct that job's permission declaration.","expected":"ci-workflow"}
+{"id":"test-052","request":"Na automação de lançamento, a publicação falha por permissão insuficiente do token. Ajuste o arquivo do fluxo, não o código.","expected":"ci-workflow"}
+{"id":"test-053","request":"The build job never restores the dependency cache. Configure the CI cache key and restore step.","expected":"ci-workflow"}
+{"id":"test-054","request":"O job baixa as dependências de novo a cada execução. Configure o cache do workflow para o gerenciador de pacotes.","expected":"ci-workflow"}
+{"id":"test-055","request":"A pull request from a fork doesn't trigger the verification workflow. Repair its event filter, not the tests it invokes.","expected":"ci-workflow"}
+{"id":"test-056","request":"O fluxo de validação não roda quando abrem uma proposta de mudança. Acerte os gatilhos da automação.","expected":"ci-workflow"}
+{"id":"test-057","request":"Add a unit test asserting the retry helper stops after its specified limit and returns the final error.","expected":"code-tests"}
+{"id":"test-058","request":"Preciso de verificações que provem o comportamento da nova tentativa quando a segunda chamada funciona e quando todas falham.","expected":"code-tests"}
+{"id":"test-059","request":"Write tests for leap-day and month-end arithmetic in the billing date function; don't change any workflow settings.","expected":"code-tests"}
+{"id":"test-060","request":"A função de prazo erra perto da virada do mês. Acrescente testes que comparem datas de saída com resultados concretos.","expected":"code-tests"}
+{"id":"test-061","request":"Create integration tests that verify the API returns a concrete error payload when a resource is missing.","expected":"code-tests"}
+{"id":"test-062","request":"Escreva testes que chamem a API e confiram o corpo e o código da resposta para um cadastro inexistente.","expected":"code-tests"}
+{"id":"test-063","request":"Cover the serializer's behavior on empty arrays and escaped quotation marks with observable assertions.","expected":"code-tests"}
+{"id":"test-064","request":"O conversor de dados trata aspas dentro do texto de forma errada. Inclua casos automatizados com saídas esperadas.","expected":"code-tests"}
+{"id":"test-065","request":"Audit a modal dialog for focus trapping, escape-key operation, and screen-reader announcement; deliver findings, not styling changes.","expected":"accessibility-audit"}
+{"id":"test-066","request":"Confira se uma pessoa que usa teclado consegue entrar e sair da janela sobreposta; relate os problemas encontrados.","expected":"accessibility-audit"}
+{"id":"test-067","request":"Review how a screen reader traverses the price table, including column headers and row associations.","expected":"accessibility-audit"}
+{"id":"test-068","request":"A tabela de preços pode estar confusa para leitores de tela. Avalie a navegação e liste falhas de semântica.","expected":"accessibility-audit"}
+{"id":"test-069","request":"Check the interface's color contrast in normal, selected, and disabled states against accessibility criteria.","expected":"accessibility-audit"}
+{"id":"test-070","request":"Audite contraste dos botões em diferentes estados e registre o que impede leitura. Não redesenhe a página.","expected":"accessibility-audit"}
+{"id":"test-071","request":"Determine whether form validation errors are announced to assistive technology and remain associated with fields.","expected":"accessibility-audit"}
+{"id":"test-072","request":"Verifique se o leitor de tela avisa qual campo falhou no envio do formulário. Entregue uma lista de problemas, sem implementar um layout.","expected":"accessibility-audit"}
+{"id":"test-073","request":"Implement a responsive article layout that moves the sidebar beneath the text on narrow screens.","expected":"web-layout"}
+{"id":"test-074","request":"Na página de artigos, faça o índice lateral ficar abaixo da leitura no celular e ajuste a largura do texto.","expected":"web-layout"}
+{"id":"test-075","request":"Rework product cards so titles, prices, and buttons align in a flexible grid at tablet widths.","expected":"web-layout"}
+{"id":"test-076","request":"Os cartões da vitrine ficam espremidos no tablet. Redistribua as colunas e os espaços com CSS.","expected":"web-layout"}
+{"id":"test-077","request":"Implement breakpoints for the navigation bar so its links wrap cleanly on compact screens.","expected":"web-layout"}
+{"id":"test-078","request":"A barra de navegação transborda em telas pequenas. Ajuste a disposição visual dos links sem fazer auditoria de acessibilidade.","expected":"web-layout"}
+{"id":"test-079","request":"Improve the empty-state page's visual hierarchy by resizing its heading and spacing the call to action.","expected":"web-layout"}
+{"id":"test-080","request":"No estado sem resultados, a mensagem e o botão parecem grudados. Arrume tipografia e espaçamento da página.","expected":"web-layout"}
+{"id":"test-081","request":"Normalize the survey's free-text country names into one category per country and flag unrecognized values.","expected":"data-cleaning"}
+{"id":"test-082","request":"As respostas da pesquisa usam três grafias para o mesmo país. Padronize essa coluna e preserve as linhas originais identificáveis.","expected":"data-cleaning"}
+{"id":"test-083","request":"Repair timestamp formats and missing device identifiers in the telemetry export before anyone plots trends.","expected":"data-cleaning"}
+{"id":"test-084","request":"O arquivo de eventos mistura horas locais e UTC e omite alguns identificadores. Deixe as linhas consistentes para análise posterior.","expected":"data-cleaning"}
+{"id":"test-085","request":"Remove repeated contacts in the spreadsheet using email as the key, and reconcile blank telephone cells.","expected":"data-cleaning"}
+{"id":"test-086","request":"A lista de contatos tem cadastros duplicados e telefones ausentes. Faça uma versão sem repetições e registre lacunas.","expected":"data-cleaning"}
+{"id":"test-087","request":"The export has stray delimiters and shifted columns. Correct the malformed rows into a consistent table, not a visualization.","expected":"data-cleaning"}
+{"id":"test-088","request":"Algumas linhas da exportação ficaram com valores na coluna errada. Corrija o arquivo tabular, sem produzir gráfico.","expected":"data-cleaning"}
+{"id":"test-089","request":"Chart weekly inventory levels from the cleaned stock table so replenishment trends are visible.","expected":"data-charting"}
+{"id":"test-090","request":"Com os dados de estoque já conferidos, mostre a evolução das quantidades por semana em um gráfico.","expected":"data-charting"}
+{"id":"test-091","request":"Choose axes for a clean energy-generation time series and plot solar and wind output together.","expected":"data-charting"}
+{"id":"test-092","request":"As medições de energia já estão padronizadas. Quero visualizar a produção solar e eólica mês a mês.","expected":"data-charting"}
+{"id":"test-093","request":"Create a visual comparison of median commute time by district from the verified dataset.","expected":"data-charting"}
+{"id":"test-094","request":"A tabela de deslocamentos foi revisada. Apresente em gráfico as diferenças de tempo entre bairros.","expected":"data-charting"}
+{"id":"test-095","request":"Make a distribution chart of completed order values from the clean transactions table; use bins that show the long tail.","expected":"data-charting"}
+{"id":"test-096","request":"Quero ver como os valores dos pedidos se distribuem, inclusive os maiores. Os registros já passaram pela limpeza.","expected":"data-charting"}
+{"id":"test-097","request":"Diagnose the exception in yesterday's log and coordinate containment of the separate outage happening now; both are required.","expected":"review"}
+{"id":"test-098","request":"Analise a causa nos rastros antigos e lidere a resposta à indisponibilidade atual. Preciso dos dois resultados com igual prioridade.","expected":"review"}
+{"id":"test-099","request":"Transcribe the line items in these PDF receipts and repair missing values in the separate CSV export. Deliver both.","expected":"review"}
+{"id":"test-100","request":"Extraia trechos de um PDF digitalizado e corrija duplicatas da planilha associada. As duas entregas são necessárias.","expected":"review"}
+{"id":"test-101","request":"Optimize the reporting SELECT with its plan and add a new database column with a rollback. Treat both as separate tasks.","expected":"review"}
+{"id":"test-102","request":"Acelere a consulta existente e migre a estrutura da tabela para incluir um campo novo. Quero as duas mudanças.","expected":"review"}
+{"id":"test-103","request":"Fix the runtime image's broken entrypoint and change the CI release job permissions. Neither is merely context.","expected":"review"}
+{"id":"test-104","request":"Conserte a etapa de cópia no Dockerfile e os gatilhos do workflow de integração contínua. Entregue ambos.","expected":"review"}
+{"id":"test-105","request":"Audit the form's screen-reader labels and implement a new mobile card grid. I need both deliverables, not a combined visual opinion.","expected":"review"}
+{"id":"test-106","request":"Avalie a ordem do teclado e refaça a distribuição das colunas para celular. Os dois trabalhos têm a mesma prioridade.","expected":"review"}
+{"id":"test-107","request":"Write tests for the backfill script and plan the database column migration that script supports; deliver both plans.","expected":"review"}
+{"id":"test-108","request":"Crie testes automatizados para o preenchimento antigo e defina a transição do esquema com rollback. Preciso de ambos.","expected":"review"}
+{"id":"test-109","request":"Interpret a contract clause and tell me whether it lets my landlord increase rent next month.","expected":"review"}
+{"id":"test-110","request":"Avalie a validade de uma multa no meu contrato de aluguel e diga quais direitos posso exigir.","expected":"review"}
+{"id":"test-111","request":"Find a train itinerary for my weekend trip and reserve seats beside each other.","expected":"review"}
+{"id":"test-112","request":"Planeje conexões de ônibus para minha viagem amanhã e faça a reserva das passagens.","expected":"review"}
+{"id":"test-113","request":"Transcribe the spoken dialogue from this WAV recording, with timestamps for each speaker.","expected":"review"}
+{"id":"test-114","request":"Ouça o áudio da entrevista e transforme a fala em texto com marcação de tempo.","expected":"review"}
+{"id":"test-115","request":"Send the signed letter to the hiring committee by email and confirm it was delivered.","expected":"review"}
+{"id":"test-116","request":"Envie minha mensagem ao grupo por correio eletrônico e confirme o recebimento.","expected":"review"}
+{"id":"test-117","request":"Recommend how to allocate my retirement savings across bonds and stocks for my personal circumstances.","expected":"review"}
+{"id":"test-118","request":"Diga qual investimento devo comprar com minhas economias para atingir minha meta de aposentadoria.","expected":"review"}
+{"id":"test-119","request":"Provision a new Linux virtual machine and configure its firewall and SSH access. This is infrastructure, not a Docker image.","expected":"review"}
+{"id":"test-120","request":"Instale um servidor virtual novo, prepare o acesso remoto e abra as portas necessárias no firewall.","expected":"review"}
