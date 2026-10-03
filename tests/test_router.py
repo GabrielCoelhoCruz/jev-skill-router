@@ -1,3 +1,4 @@
+import hashlib
 import json
 import os
 import subprocess
@@ -24,10 +25,13 @@ def local_api(reply, mode="normal"):
         pass
 
     received = Captured()
+    received.raw = []
 
     class Handler(BaseHTTPRequestHandler):
         def do_POST(self):
-            received.append(json.loads(self.rfile.read(int(self.headers["Content-Length"]))))
+            body = self.rfile.read(int(self.headers["Content-Length"]))
+            received.raw.append(body)
+            received.append(json.loads(body))
             if mode == "aborted_status":
                 self.close_connection = True
                 return
@@ -142,6 +146,19 @@ class RouterTests(unittest.TestCase):
         self.assertNotIn("private-label", json.dumps(received))
         self.assertNotIn("code-tests\"", json.dumps(received[0]["state"]))
         self.assertEqual(received[0], received[1])
+
+    def test_provider_payload_bytes_match_original_base(self):
+        cases = [
+            ("Fix the Dockerfile image build", CATALOGUE,
+             "65d56108bca4d31f63c95ee4e62ed38e65dfd3e7f2ddc646058a40104c90eac1"),
+            ("Crie testes para o analisador, sem mudar o CI.",
+             [{"id": "code-tests", "description": "Add tests for code", "examples": ["Test a parser"]}],
+             "76d54b0dd6b89773c4209a736d8dea4de3a3d54be52da1a8ab3a485390b7732c"),
+        ]
+        for request, catalogue, expected_hash in cases:
+            with self.subTest(request=request), local_api(choice_response()) as received:
+                route(request, catalogue, api_key="fake-test-key")
+            self.assertEqual(hashlib.sha256(received.raw[0]).hexdigest(), expected_hash)
 
     def test_local_http_uncertainty_missing_usage_and_invalid_schema(self):
         with local_api(choice_response(confidence=0.4, usage=False)):
@@ -278,16 +295,38 @@ class RouterTests(unittest.TestCase):
         all_review = evaluate([{"id": "three", "request": "Fix the CI workflow and application tests equally.",
                                 "expected": "review"}], CATALOGUE, dry_run=True)["cases"][0]
         labels = {entry["id"] for entry in CATALOGUE} | {"review", "no_skill"}
-        first = grade([correct, wrong, all_review], labels)
-        second = grade(json.loads(json.dumps([correct, wrong, all_review])), labels)
+        planned = [("one", 1), ("two", 1), ("three", 1)]
+        first = grade([correct, wrong, all_review], labels, planned)
+        second = grade(json.loads(json.dumps([correct, wrong, all_review])), labels, planned)
         self.assertEqual(first, second)
         self.assertEqual((first["summary"]["cases"], first["summary"]["correct"],
                           first["summary"]["wrong_routes"], first["summary"]["unnecessary_reviews"]), (3, 2, 1, 0))
-        self.assertEqual(grade([all_review], labels)["summary"]["correct"], 1)
+        self.assertEqual(grade([all_review], labels, [("three", 1)])["summary"]["correct"], 1)
         with self.assertRaisesRegex(InputError, "at least one"):
-            grade([], labels)
+            grade([], labels, planned)
         with self.assertRaisesRegex(InputError, "invalid stored outcome"):
-            grade([{**correct, "predicted": "unknown-skill"}], labels)
+            grade([{**correct, "predicted": "unknown-skill"}], labels, [("one", 1)])
+
+    def test_grader_rejects_missing_duplicate_or_wrong_repeat_observations(self):
+        cases = [{"id": "one", "request": "Fix the Dockerfile image build", "expected": "container-build"},
+                 {"id": "two", "request": "Hi there", "expected": "no_skill"}]
+        report = evaluate_repeats(cases, CATALOGUE, None, repeats=2, dry_run=True)
+        labels = {entry["id"] for entry in CATALOGUE} | {"review", "no_skill"}
+        planned = [("one", 1), ("two", 1), ("one", 2), ("two", 2)]
+        self.assertEqual((report["summary"]["planned_observations"], report["summary"]["planned_cases"],
+                          report["summary"]["planned_repetitions"], len(report["plan"])), (4, 2, 2, 4))
+        stored = json.loads(json.dumps(report))
+        restored_plan = [(item["id"], item["repeat"]) for item in stored["plan"]]
+        self.assertEqual(grade(stored["cases"], labels, restored_plan)["summary"]["correct"],
+                         report["summary"]["correct"])
+        with self.assertRaisesRegex(InputError, "planned case and repeat"):
+            grade(report["cases"][:-1], labels, planned)
+        with self.assertRaisesRegex(InputError, "planned case and repeat"):
+            grade(report["cases"][:3] + [report["cases"][0]], labels, planned)
+        with self.assertRaisesRegex(InputError, "planned case and repeat"):
+            grade(report["cases"][:3] + [{**report["cases"][3], "repeat": 3}], labels, planned)
+        with self.assertRaisesRegex(InputError, "planned case and repeat"):
+            grade(report["cases"][:3] + [{**report["cases"][3], "repeat": []}], labels, planned)
 
     def test_api_error_is_not_counted_as_correct_review(self):
         with patch("urllib.request.build_opener", side_effect=OSError("offline")):

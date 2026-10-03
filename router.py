@@ -186,12 +186,18 @@ def evaluate(cases, catalogue, *, dry_run=False, api_key=None, model=MODEL):
                         "scored_action": outcome["reason"] if error else predicted,
                         "latency_ms": round((time.perf_counter() - started) * 1000, 3),
                         "decision": outcome})
-    return grade(results, valid_labels)
+    return grade(results, valid_labels, [(case["id"], 1) for case in cases])
 
 
-def grade(results, valid_labels):
-    if not results:
+def grade(results, valid_labels, planned):
+    if not results or not planned:
         raise InputError("grader needs at least one stored outcome")
+    if (any(not isinstance(item, tuple) or len(item) != 2 or not isinstance(item[0], str) or not item[0] or
+            type(item[1]) is not int or item[1] < 1 for item in planned) or len(set(planned)) != len(planned) or
+            any(not isinstance(row, dict) or not isinstance(row.get("id"), str) or
+                type(row.get("repeat", 1)) is not int for row in results) or
+            Counter((row.get("id"), row.get("repeat", 1)) for row in results) != Counter(planned)):
+        raise InputError("stored outcomes must match the planned case and repeat inventory")
     if any(r["expected"] not in valid_labels or r["predicted"] not in valid_labels or
            r["decision"]["outcome"] not in ("route", "no_skill", "review") or
            r["correct"] != (r["scored_action"] == r["expected"]) for r in results):
@@ -208,7 +214,10 @@ def grade(results, valid_labels):
     labels = sorted(valid_labels | {r["scored_action"] for r in results})
     confusion = {expected: {predicted: sum(r["expected"] == expected and r["scored_action"] == predicted for r in results)
                             for predicted in labels} for expected in sorted(valid_labels)}
-    return {"summary": {"cases": len(results), "correct": sum(r["correct"] for r in results),
+    return {"summary": {"cases": len(results), "planned_observations": len(planned),
+                         "planned_cases": len({identifier for identifier, _ in planned}),
+                         "planned_repetitions": len({repeat for _, repeat in planned}),
+                         "correct": sum(r["correct"] for r in results),
                          "accuracy": sum(r["correct"] for r in results) / len(results),
                          "wrong_routes": predicted_routes - correct_routes,
                          "reviews": count["review"], "unnecessary_reviews": sum(r["scored_action"] == "review" and r["expected"] != "review" for r in results),
@@ -230,6 +239,7 @@ def grade(results, valid_labels):
                          "observed_latency_ms": round(sum(r["latency_ms"] for r in results), 3),
                          "mean_latency_ms": round(sum(r["latency_ms"] for r in results) / len(results), 3)},
             "confusion": confusion,
+            "plan": [{"id": identifier, "repeat": repeat} for identifier, repeat in planned],
             "cases": results}
 
 
@@ -244,7 +254,8 @@ def evaluate_repeats(cases, catalogue, families, *, repeats=1, dry_run=False, ap
         raise InputError("families must map every case id to one nonempty family id")
     runs = [evaluate(cases, catalogue, dry_run=dry_run, api_key=api_key, model=model) for _ in range(repeats)]
     results = [{**case, "repeat": index + 1} for index, run in enumerate(runs) for case in run["cases"]]
-    report = grade(results, {skill["id"] for skill in catalogue} | {"no_skill", "review"})
+    report = grade(results, {skill["id"] for skill in catalogue} | {"no_skill", "review"},
+                   [(case["id"], index + 1) for index in range(repeats) for case in cases])
     grouped = {case["id"]: [row for row in results if row["id"] == case["id"]] for case in cases}
     report["summary"]["unique_cases"] = len(cases)
     report["summary"]["repetitions"] = repeats
