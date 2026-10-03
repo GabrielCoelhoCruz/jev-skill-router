@@ -2,6 +2,7 @@
 
 import argparse
 import hashlib
+import http.client
 import json
 import math
 import os
@@ -113,8 +114,11 @@ def jev(request, catalogue, api_key, model=MODEL):
     try:
         with urllib.request.build_opener(NoRedirect()).open(req, timeout=30) as response:
             body = response.read(1_000_001)
+            declared_length = getattr(response, "headers", {}).get("Content-Length")
         if len(body) > 1_000_000:
             raise ValueError("oversized response")
+        if declared_length is not None and len(body) < int(declared_length):
+            return api_review("api_unavailable")
         raw = json.loads(body)
         answer = raw["answers"]["route"]
         probabilities = answer["probabilities"]
@@ -140,7 +144,7 @@ def jev(request, catalogue, api_key, model=MODEL):
         return decision(choice, probabilities, confidence, "jev", "model_choice", 1, input_tokens, output_tokens)
     except urllib.error.HTTPError as error:
         return api_review(f"api_http_{error.code}")
-    except (urllib.error.URLError, TimeoutError, OSError):
+    except (urllib.error.URLError, TimeoutError, OSError, http.client.HTTPException):
         return api_review("api_unavailable")
     except (ValueError, KeyError, TypeError, UnicodeError):
         return api_review("api_invalid_response")

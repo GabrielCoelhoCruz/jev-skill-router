@@ -19,26 +19,43 @@ CATALOGUE = json.loads((ROOT / "data/catalogue.json").read_text())
 
 
 @contextmanager
-def local_api(reply):
-    received = []
+def local_api(reply, mode="normal"):
+    class Captured(list):
+        pass
+
+    received = Captured()
 
     class Handler(BaseHTTPRequestHandler):
         def do_POST(self):
             received.append(json.loads(self.rfile.read(int(self.headers["Content-Length"]))))
+            if mode == "aborted_status":
+                self.close_connection = True
+                return
             body = json.dumps(reply).encode() if isinstance(reply, dict) else reply
             self.send_response(200)
-            self.send_header("Content-Type", "application/json")
+            if mode == "truncated_chunk":
+                self.send_header("Transfer-Encoding", "chunked")
+                self.end_headers()
+                self.wfile.write(b'20\r\n{"model":')
+                self.wfile.flush()
+                self.close_connection = True
+                return
+            self.send_header("Content-Length", str(len(body) + 100 if mode == "aborted_length" else len(body)))
             self.end_headers()
             self.wfile.write(body)
+            self.wfile.flush()
+            if mode == "aborted_length":
+                self.close_connection = True
 
         def log_message(self, *args):
             pass
 
     server = HTTPServer(("127.0.0.1", 0), Handler)
+    received.endpoint = f"http://127.0.0.1:{server.server_port}/choice"
     thread = threading.Thread(target=server.serve_forever)
     thread.start()
     try:
-        with patch("router.ENDPOINT", f"http://127.0.0.1:{server.server_port}/choice"):
+        with patch("router.ENDPOINT", received.endpoint):
             yield received
     finally:
         server.shutdown()
@@ -148,6 +165,71 @@ class RouterTests(unittest.TestCase):
             answer = route("Fix the Dockerfile image build", CATALOGUE, api_key="fake-test-key")
         self.assertEqual((answer["outcome"], answer["reason"], answer["usage"]["requests"]),
                          ("review", "api_unavailable", 1))
+
+    def test_cli_truncated_http_read_returns_review_and_eval_records_error(self):
+        env = os.environ.copy()
+        env["TYPESAFE_API_KEY"] = "fake-test-key"
+        with local_api(b"", mode="truncated_chunk") as received:
+            code = "import router; router.ENDPOINT=" + repr(received.endpoint) + "; raise SystemExit(router.main(['route', '--request', 'Fix the Dockerfile']))"
+            run = subprocess.run([sys.executable, "-c", code], cwd=ROOT, env=env, capture_output=True, text=True)
+        self.assertEqual(run.returncode, 0, run.stderr)
+        answer = json.loads(run.stdout)
+        self.assertEqual((answer["outcome"], answer["source"], answer["reason"], answer["usage"]["requests"]),
+                         ("review", "api", "api_unavailable", 1))
+        self.assertIsNone(answer["usage"]["input_tokens"])
+        self.assertNotIn("fake-test-key", run.stdout + run.stderr)
+        self.assertNotIn("Traceback", run.stderr)
+        with tempfile.TemporaryDirectory() as folder, local_api(b"", mode="truncated_chunk") as received:
+            dataset = Path(folder) / "cases.jsonl"
+            output = Path(folder) / "report.json"
+            dataset.write_text(json.dumps({"id": "one", "request": "Fix the Dockerfile", "expected": "review"}) + "\n")
+            code = ("import router; router.ENDPOINT=" + repr(received.endpoint) +
+                    "; raise SystemExit(router.main(['eval', '--dataset', " + repr(str(dataset)) +
+                    ", '--output', " + repr(str(output)) + "]))")
+            run = subprocess.run([sys.executable, "-c", code], cwd=ROOT, env=env, capture_output=True, text=True)
+            self.assertEqual(run.returncode, 0, run.stderr)
+            report = json.loads(output.read_text())
+        self.assertEqual((report["summary"]["correct"], report["summary"]["api_failures"],
+                          report["summary"]["unscored_errors"]), (0, 1, 1))
+        self.assertEqual(report["cases"][0]["scored_action"], "api_unavailable")
+
+    def test_adjacent_aborted_http_reads_and_invalid_json(self):
+        for mode in ("aborted_length", "aborted_status"):
+            with self.subTest(mode=mode), local_api(b"", mode=mode):
+                answer = route("Fix the Dockerfile image build", CATALOGUE, api_key="fake-test-key")
+            self.assertEqual((answer["outcome"], answer["reason"], answer["usage"]["requests"]),
+                             ("review", "api_unavailable", 1))
+            self.assertIsNone(answer["usage"]["output_tokens"])
+        with local_api(b"not json"):
+            malformed = route("Fix the Dockerfile image build", CATALOGUE, api_key="fake-test-key")
+        self.assertEqual((malformed["outcome"], malformed["reason"]), ("review", "api_invalid_response"))
+
+    def test_timeout_during_body_read_is_not_a_successful_review(self):
+        class Response:
+            headers = {}
+
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *args):
+                pass
+
+            def read(self, size):
+                raise TimeoutError("body stalled")
+
+        class Opener:
+            def open(self, request, timeout):
+                return Response()
+
+        with patch("urllib.request.build_opener", return_value=Opener()):
+            report = evaluate([{"id": "one", "request": "Fix CI and tests equally", "expected": "review"}],
+                              CATALOGUE, api_key="fake-test-key")
+        answer = report["cases"][0]["decision"]
+        self.assertEqual((answer["outcome"], answer["source"], answer["reason"], answer["usage"]["requests"]),
+                         ("review", "api", "api_unavailable", 1))
+        self.assertEqual((report["summary"]["correct"], report["summary"]["api_failures"]), (0, 1))
+        self.assertIsNone(answer["usage"]["input_tokens"])
+        self.assertNotIn("fake-test-key", json.dumps(report))
 
     def test_rounded_distribution_is_normalized_without_silencing_invalid_data(self):
         with local_api(choice_response(skill="__review__", probability=0.99)):
