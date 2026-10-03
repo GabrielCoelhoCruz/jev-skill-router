@@ -174,9 +174,22 @@ def evaluate(cases, catalogue, *, dry_run=False, api_key=None, model=MODEL):
         started = time.perf_counter()
         outcome = route(case["request"], catalogue, dry_run=dry_run, api_key=api_key, model=model)
         predicted = outcome["skill_id"] or outcome["outcome"]
+        error = outcome["source"] == "api" or outcome["reason"] == "missing_api_key"
         results.append({"id": case["id"], "expected": case["expected"], "predicted": predicted,
-                        "correct": predicted == case["expected"], "latency_ms": round((time.perf_counter() - started) * 1000, 3),
+                        "correct": not error and predicted == case["expected"],
+                        "scored_action": outcome["reason"] if error else predicted,
+                        "latency_ms": round((time.perf_counter() - started) * 1000, 3),
                         "decision": outcome})
+    return grade(results, valid_labels)
+
+
+def grade(results, valid_labels):
+    if not results:
+        raise InputError("grader needs at least one stored outcome")
+    if any(r["expected"] not in valid_labels or r["predicted"] not in valid_labels or
+           r["decision"]["outcome"] not in ("route", "no_skill", "review") or
+           r["correct"] != (r["scored_action"] == r["expected"]) for r in results):
+        raise InputError("invalid stored outcome")
     count = Counter(r["predicted"] for r in results)
     calls = sum(r["decision"]["usage"]["requests"] for r in results)
     usages = [r["decision"]["usage"] for r in results]
@@ -186,13 +199,14 @@ def evaluate(cases, catalogue, *, dry_run=False, api_key=None, model=MODEL):
     expected_routes = sum(r["expected"] not in ("no_skill", "review") for r in results)
     correct_routes = sum(r["correct"] and r["predicted"] not in ("no_skill", "review") for r in results)
     predicted_routes = sum(r["predicted"] not in ("no_skill", "review") for r in results)
-    labels = sorted(valid_labels)
-    confusion = {expected: {predicted: sum(r["expected"] == expected and r["predicted"] == predicted for r in results)
-                            for predicted in labels} for expected in labels}
+    labels = sorted(valid_labels | {r["scored_action"] for r in results})
+    confusion = {expected: {predicted: sum(r["expected"] == expected and r["scored_action"] == predicted for r in results)
+                            for predicted in labels} for expected in sorted(valid_labels)}
     return {"summary": {"cases": len(results), "correct": sum(r["correct"] for r in results),
                          "accuracy": sum(r["correct"] for r in results) / len(results),
                          "wrong_routes": predicted_routes - correct_routes,
-                         "reviews": count["review"], "unnecessary_reviews": sum(r["predicted"] == "review" and r["expected"] != "review" for r in results),
+                         "reviews": count["review"], "unnecessary_reviews": sum(r["scored_action"] == "review" and r["expected"] != "review" for r in results),
+                         "unscored_errors": sum(r["scored_action"] not in valid_labels for r in results),
                          "wrong_routes_denominator": len(results),
                          "unnecessary_reviews_denominator": sum(r["expected"] != "review" for r in results),
                          "automatic_route_coverage": {"numerator": predicted_routes, "denominator": len(results)},
@@ -200,6 +214,7 @@ def evaluate(cases, catalogue, *, dry_run=False, api_key=None, model=MODEL):
                          "fallbacks": sum(r["decision"]["source"] == "lexical" for r in results),
                          "api_failures": sum(r["decision"]["source"] == "api" and r["decision"]["reason"] not in ("api_invalid_response", "api_model_mismatch") for r in results),
                          "invalid_responses": sum(r["decision"]["reason"] in ("api_invalid_response", "api_model_mismatch") for r in results),
+                         "missing_credentials": sum(r["decision"]["reason"] == "missing_api_key" for r in results),
                          "api_requests": calls, "known_input_tokens": known_input, "known_output_tokens": known_output,
                          "api_errors_denominator": calls,
                          "unknown_usage_cases": len(usages) - sum(u["input_tokens"] is not None and u["output_tokens"] is not None for u in usages),
@@ -210,6 +225,41 @@ def evaluate(cases, catalogue, *, dry_run=False, api_key=None, model=MODEL):
                          "mean_latency_ms": round(sum(r["latency_ms"] for r in results) / len(results), 3)},
             "confusion": confusion,
             "cases": results}
+
+
+def evaluate_repeats(cases, catalogue, families, *, repeats=1, dry_run=False, api_key=None, model=MODEL):
+    if type(repeats) is not int or not 1 <= repeats <= 3:
+        raise InputError("repeats must be 1..3")
+    if not isinstance(cases, list) or any(not isinstance(case, dict) or not isinstance(case.get("id"), str)
+                                          for case in cases):
+        raise InputError("dataset must contain cases with string ids")
+    if families is not None and (not isinstance(families, dict) or set(families) != {case["id"] for case in cases} or
+                                 any(not isinstance(family, str) or not family for family in families.values())):
+        raise InputError("families must map every case id to one nonempty family id")
+    runs = [evaluate(cases, catalogue, dry_run=dry_run, api_key=api_key, model=model) for _ in range(repeats)]
+    results = [{**case, "repeat": index + 1} for index, run in enumerate(runs) for case in run["cases"]]
+    report = grade(results, {skill["id"] for skill in catalogue} | {"no_skill", "review"})
+    grouped = {case["id"]: [row for row in results if row["id"] == case["id"]] for case in cases}
+    report["summary"]["unique_cases"] = len(cases)
+    report["summary"]["repetitions"] = repeats
+    report["summary"]["families"] = len(set(families.values())) if families is not None else None
+    report["repeat_summaries"] = [run["summary"] for run in runs]
+    report["case_variability"] = {identifier: {"family": families[identifier] if families is not None else None,
+                                               "observed_actions": [row["scored_action"] for row in rows],
+                                               "distinct_actions": len({row["scored_action"] for row in rows}),
+                                               "correct_repeats": sum(row["correct"] for row in rows)}
+                                  for identifier, rows in grouped.items()}
+    if families is not None:
+        report["family_variability"] = {family: {"cases": sum(f == family for f in families.values()),
+                                                 "changing_cases": sum(families[identifier] == family and
+                                                                       len({row["scored_action"] for row in rows}) > 1
+                                                                       for identifier, rows in grouped.items()),
+                                                 "wrong_route_observations": sum(families[identifier] == family and
+                                                                                 row["predicted"] not in ("no_skill", "review") and
+                                                                                 not row["correct"] for identifier, rows in grouped.items()
+                                                                                 for row in rows)}
+                                        for family in sorted(set(families.values()))}
+    return report
 
 
 def main(argv=None):
@@ -225,6 +275,8 @@ def main(argv=None):
         else:
             command.add_argument("--dataset", default="data/own-36.jsonl")
             command.add_argument("--output", help="write detailed JSON report; refuses to overwrite")
+            command.add_argument("--repeats", type=int, default=1, help="independent attempts per case, 1..3")
+            command.add_argument("--metadata", help="optional JSON mapping case ids to objects with a family id")
     args = parser.parse_args(argv)
     try:
         if not re.fullmatch(r"jev-[A-Za-z0-9._-]+", args.model):
@@ -237,12 +289,20 @@ def main(argv=None):
         else:
             dataset_bytes = Path(args.dataset).read_bytes()
             cases = [json.loads(line) for line in dataset_bytes.decode().splitlines() if line.strip()]
-            report = evaluate(cases, catalogue, dry_run=args.dry_run, api_key=key, model=args.model)
+            metadata_bytes = Path(args.metadata).read_bytes() if args.metadata else None
+            metadata = json.loads(metadata_bytes) if metadata_bytes is not None else None
+            if metadata is not None and (not isinstance(metadata, dict) or any(not isinstance(item, dict) or
+                                                                                  not isinstance(item.get("family"), str)
+                                                                                  for item in metadata.values())):
+                raise InputError("metadata must map case ids to objects with a family id")
+            families = {identifier: item["family"] for identifier, item in metadata.items()} if metadata is not None else None
+            report = evaluate_repeats(cases, catalogue, families, repeats=args.repeats,
+                                      dry_run=args.dry_run, api_key=key, model=args.model)
             revision = subprocess.run(["git", "rev-parse", "HEAD"], cwd=Path(__file__).resolve().parent,
                                       capture_output=True, text=True, check=False)
             changes = subprocess.run(["git", "status", "--porcelain", "--untracked-files=no"], cwd=Path(__file__).resolve().parent,
                                      capture_output=True, text=True, check=False)
-            settings = {"model": args.model, "dry_run": args.dry_run, "endpoint": ENDPOINT,
+            settings = {"model": args.model, "dry_run": args.dry_run, "repeats": args.repeats, "endpoint": ENDPOINT,
                         "input_usd_per_million": INPUT_USD_PER_MILLION,
                         "route_min_confidence": 0.55, "route_min_probability": 0.55,
                         "no_cache": True, "no_retries": True,
@@ -251,6 +311,7 @@ def main(argv=None):
                                     "source_dirty": bool(changes.stdout.strip()) if changes.returncode == 0 else None,
                                     "catalogue_sha256": hashlib.sha256(catalogue_bytes).hexdigest(),
                                     "dataset_sha256": hashlib.sha256(dataset_bytes).hexdigest(),
+                                    "metadata_sha256": hashlib.sha256(metadata_bytes).hexdigest() if metadata_bytes is not None else None,
                                     "config_sha256": hashlib.sha256(json.dumps(settings, sort_keys=True).encode()).hexdigest(),
                                     "settings": settings}
             if args.output:

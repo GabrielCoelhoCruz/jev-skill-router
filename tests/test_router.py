@@ -11,7 +11,7 @@ from io import BytesIO
 from pathlib import Path
 from unittest.mock import patch
 
-from router import InputError, catalogue_from, evaluate, route
+from router import InputError, catalogue_from, evaluate, evaluate_repeats, grade, route
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -116,12 +116,15 @@ class RouterTests(unittest.TestCase):
         with local_api(choice_response()) as received:
             report = evaluate([{"id": "private-case", "request": "Fix the Dockerfile image build",
                                 "expected": "code-tests", "annotation": "private-label"}], CATALOGUE, api_key="fake-test-key")
+            evaluate([{"id": "other-case", "request": "Fix the Dockerfile image build",
+                       "expected": "review", "annotation": "different-label"}], CATALOGUE, api_key="fake-test-key")
         self.assertEqual(report["cases"][0]["predicted"], "container-build")
         self.assertEqual((report["summary"]["wrong_routes"], report["summary"]["api_requests"]), (1, 1))
         self.assertEqual(received[0]["state"], {"request": "Fix the Dockerfile image build"})
         self.assertNotIn("private-case", json.dumps(received))
         self.assertNotIn("private-label", json.dumps(received))
         self.assertNotIn("code-tests\"", json.dumps(received[0]["state"]))
+        self.assertEqual(received[0], received[1])
 
     def test_local_http_uncertainty_missing_usage_and_invalid_schema(self):
         with local_api(choice_response(confidence=0.4, usage=False)):
@@ -175,6 +178,47 @@ class RouterTests(unittest.TestCase):
         self.assertEqual(copied["confusion"]["no_skill"]["container-build"], 1)
         self.assertEqual(copied["summary"]["api_requests"], 2)
         self.assertGreaterEqual(copied["summary"]["observed_latency_ms"], 0)
+
+    def test_grader_deterministic_correct_wrong_all_review_empty_and_invalid(self):
+        correct = evaluate([{"id": "one", "request": "Fix the Dockerfile image build", "expected": "container-build"}],
+                           CATALOGUE, dry_run=True)["cases"][0]
+        wrong = {**correct, "id": "two", "expected": "code-tests", "correct": False}
+        all_review = evaluate([{"id": "three", "request": "Fix the CI workflow and application tests equally.",
+                                "expected": "review"}], CATALOGUE, dry_run=True)["cases"][0]
+        labels = {entry["id"] for entry in CATALOGUE} | {"review", "no_skill"}
+        first = grade([correct, wrong, all_review], labels)
+        second = grade(json.loads(json.dumps([correct, wrong, all_review])), labels)
+        self.assertEqual(first, second)
+        self.assertEqual((first["summary"]["cases"], first["summary"]["correct"],
+                          first["summary"]["wrong_routes"], first["summary"]["unnecessary_reviews"]), (3, 2, 1, 0))
+        self.assertEqual(grade([all_review], labels)["summary"]["correct"], 1)
+        with self.assertRaisesRegex(InputError, "at least one"):
+            grade([], labels)
+        with self.assertRaisesRegex(InputError, "invalid stored outcome"):
+            grade([{**correct, "predicted": "unknown-skill"}], labels)
+
+    def test_api_error_is_not_counted_as_correct_review(self):
+        with patch("urllib.request.build_opener", side_effect=OSError("offline")):
+            report = evaluate([{"id": "one", "request": "Fix CI and tests equally", "expected": "review"}],
+                              CATALOGUE, api_key="fake-test-key")
+        self.assertEqual((report["summary"]["correct"], report["summary"]["api_failures"],
+                          report["summary"]["unscored_errors"]), (0, 1, 1))
+        self.assertEqual(report["confusion"]["review"]["api_unavailable"], 1)
+
+    def test_repeats_make_distinct_requests_and_cluster_by_family(self):
+        cases = [{"id": "a", "request": "Fix the Dockerfile image build", "expected": "container-build"},
+                 {"id": "b", "request": "Build the Docker image", "expected": "container-build"}]
+        with local_api(choice_response()) as received:
+            report = evaluate_repeats(cases, CATALOGUE, {"a": "CD1", "b": "CD1"},
+                                      repeats=3, api_key="fake-test-key")
+        self.assertEqual((len(received), report["summary"]["cases"], report["summary"]["unique_cases"],
+                          report["summary"]["repetitions"], report["summary"]["families"]), (6, 6, 2, 3, 1))
+        self.assertEqual(report["case_variability"]["a"]["observed_actions"], ["container-build"] * 3)
+        self.assertEqual(report["family_variability"]["CD1"]["changing_cases"], 0)
+        with self.assertRaisesRegex(InputError, "repeats must"):
+            evaluate_repeats(cases, CATALOGUE, None, repeats=4, dry_run=True)
+        with self.assertRaisesRegex(InputError, "families must"):
+            evaluate_repeats(cases, CATALOGUE, {"a": "CD1"}, repeats=3, dry_run=True)
 
     def test_cli_dry_run_ignores_present_key_and_never_overwrites_report(self):
         env = os.environ.copy()
