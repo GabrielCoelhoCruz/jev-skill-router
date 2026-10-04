@@ -1,0 +1,1082 @@
+{
+  "test-001": {
+    "family": "PH1",
+    "rationale": "Reading scanned register text with folio references is PDF extraction.",
+    "source": "original",
+    "strata": [
+      "direct",
+      "en"
+    ]
+  },
+  "test-002": {
+    "family": "PH1",
+    "rationale": "Reading scanned register text with folio references is PDF extraction.",
+    "source": "original",
+    "strata": [
+      "paraphrase",
+      "pt"
+    ]
+  },
+  "test-003": {
+    "family": "PH2",
+    "rationale": "Extracting appendix passages or tables with page citations is PDF extraction.",
+    "source": "original",
+    "strata": [
+      "direct",
+      "en"
+    ]
+  },
+  "test-004": {
+    "family": "PH2",
+    "rationale": "Extracting appendix passages or tables with page citations is PDF extraction.",
+    "source": "original",
+    "strata": [
+      "paraphrase",
+      "pt"
+    ]
+  },
+  "test-005": {
+    "family": "PH3",
+    "rationale": "Reading faded text and numbers from receipt PDFs is extraction, not styling.",
+    "source": "original",
+    "strata": [
+      "direct",
+      "en"
+    ]
+  },
+  "test-006": {
+    "family": "PH3",
+    "rationale": "Reading faded text and numbers from receipt PDFs is extraction, not styling.",
+    "source": "original",
+    "strata": [
+      "paraphrase",
+      "pt"
+    ]
+  },
+  "test-007": {
+    "family": "PH4",
+    "rationale": "Transcribing transcript passages with page references is PDF extraction; quoted text is data.",
+    "source": "original",
+    "strata": [
+      "direct",
+      "en"
+    ]
+  },
+  "test-008": {
+    "family": "PH4",
+    "rationale": "Transcribing transcript passages with page references is PDF extraction; quoted text is data.",
+    "source": "original",
+    "strata": [
+      "quoted_context",
+      "pt"
+    ]
+  },
+  "test-009": {
+    "family": "LH1",
+    "rationale": "Explaining a completed gateway fault from traces is log diagnosis, not active response.",
+    "source": "original",
+    "strata": [
+      "direct",
+      "en"
+    ]
+  },
+  "test-010": {
+    "family": "LH1",
+    "rationale": "Explaining a completed gateway fault from traces is log diagnosis, not active response.",
+    "source": "original",
+    "strata": [
+      "paraphrase",
+      "pt"
+    ]
+  },
+  "test-011": {
+    "family": "LH2",
+    "rationale": "Finding the origin of past 503 errors from event traces is log diagnosis; logged commands are data.",
+    "source": "original",
+    "strata": [
+      "direct",
+      "en"
+    ]
+  },
+  "test-012": {
+    "family": "LH2",
+    "rationale": "Finding the origin of past 503 errors from event traces is log diagnosis; logged commands are data.",
+    "source": "original",
+    "strata": [
+      "quoted_context",
+      "pt"
+    ]
+  },
+  "test-013": {
+    "family": "LH3",
+    "rationale": "Explaining a batch failure from a stack trace is technical fault diagnosis.",
+    "source": "original",
+    "strata": [
+      "direct",
+      "en"
+    ]
+  },
+  "test-014": {
+    "family": "LH3",
+    "rationale": "Explaining a batch failure from a stack trace is technical fault diagnosis.",
+    "source": "original",
+    "strata": [
+      "noise",
+      "pt"
+    ]
+  },
+  "test-015": {
+    "family": "LH4",
+    "rationale": "Correlating past authentication errors and traces is log diagnosis, not incident coordination.",
+    "source": "original",
+    "strata": [
+      "direct",
+      "en"
+    ]
+  },
+  "test-016": {
+    "family": "LH4",
+    "rationale": "Correlating past authentication errors and traces is log diagnosis, not incident coordination.",
+    "source": "original",
+    "strata": [
+      "paraphrase",
+      "pt"
+    ]
+  },
+  "test-017": {
+    "family": "IH1",
+    "rationale": "Containment, impact, and updates for current API failure are active incident response.",
+    "source": "original",
+    "strata": [
+      "direct",
+      "en"
+    ]
+  },
+  "test-018": {
+    "family": "IH1",
+    "rationale": "Containment, impact, and updates for current API failure are active incident response.",
+    "source": "original",
+    "strata": [
+      "paraphrase",
+      "pt"
+    ]
+  },
+  "test-019": {
+    "family": "IH2",
+    "rationale": "Coordinating mitigation and communication for live notification delays is incident triage.",
+    "source": "original",
+    "strata": [
+      "direct",
+      "en"
+    ]
+  },
+  "test-020": {
+    "family": "IH2",
+    "rationale": "Coordinating mitigation and communication for live notification delays is incident triage.",
+    "source": "original",
+    "strata": [
+      "paraphrase",
+      "pt"
+    ]
+  },
+  "test-021": {
+    "family": "IH3",
+    "rationale": "Managing impact and stakeholders during a current sign-in outage is incident triage.",
+    "source": "original",
+    "strata": [
+      "direct",
+      "en"
+    ]
+  },
+  "test-022": {
+    "family": "IH3",
+    "rationale": "Managing impact and stakeholders during a current sign-in outage is incident triage.",
+    "source": "original",
+    "strata": [
+      "paraphrase",
+      "pt"
+    ]
+  },
+  "test-023": {
+    "family": "IH4",
+    "rationale": "An active inventory synchronization outage needs containment and status coordination.",
+    "source": "original",
+    "strata": [
+      "direct",
+      "en"
+    ]
+  },
+  "test-024": {
+    "family": "IH4",
+    "rationale": "An active inventory synchronization outage needs containment and status coordination.",
+    "source": "original",
+    "strata": [
+      "paraphrase",
+      "pt"
+    ]
+  },
+  "test-025": {
+    "family": "QH1",
+    "rationale": "Accelerating an existing finance query without changing totals or schema is SQL tuning.",
+    "source": "original",
+    "strata": [
+      "direct",
+      "en"
+    ]
+  },
+  "test-026": {
+    "family": "QH1",
+    "rationale": "Accelerating an existing finance query without changing totals or schema is SQL tuning.",
+    "source": "original",
+    "strata": [
+      "paraphrase",
+      "pt"
+    ]
+  },
+  "test-027": {
+    "family": "QH2",
+    "rationale": "Improving a lookup by plan, index, or predicate without structural changes is SQL tuning.",
+    "source": "original",
+    "strata": [
+      "direct",
+      "en"
+    ]
+  },
+  "test-028": {
+    "family": "QH2",
+    "rationale": "Improving a lookup by plan, index, or predicate without structural changes is SQL tuning.",
+    "source": "original",
+    "strata": [
+      "paraphrase",
+      "pt"
+    ]
+  },
+  "test-029": {
+    "family": "QH3",
+    "rationale": "Optimizing the sort of an existing SELECT with its plan is SQL tuning.",
+    "source": "original",
+    "strata": [
+      "direct",
+      "en"
+    ]
+  },
+  "test-030": {
+    "family": "QH3",
+    "rationale": "Optimizing the sort of an existing SELECT with its plan is SQL tuning.",
+    "source": "original",
+    "strata": [
+      "paraphrase",
+      "pt"
+    ]
+  },
+  "test-031": {
+    "family": "QH4",
+    "rationale": "Tuning an existing tenant-filter query and indexes is SQL tuning; a quoted comment is not an instruction.",
+    "source": "original",
+    "strata": [
+      "direct",
+      "en"
+    ]
+  },
+  "test-032": {
+    "family": "QH4",
+    "rationale": "Tuning an existing tenant-filter query and indexes is SQL tuning; a quoted comment is not an instruction.",
+    "source": "original",
+    "strata": [
+      "quoted_context",
+      "pt"
+    ]
+  },
+  "test-033": {
+    "family": "MH1",
+    "rationale": "Retiring an enum value with a staged rollout and rollback is schema migration.",
+    "source": "original",
+    "strata": [
+      "direct",
+      "en"
+    ]
+  },
+  "test-034": {
+    "family": "MH1",
+    "rationale": "Retiring an enum value with a staged rollout and rollback is schema migration.",
+    "source": "original",
+    "strata": [
+      "paraphrase",
+      "pt"
+    ]
+  },
+  "test-035": {
+    "family": "MH2",
+    "rationale": "Backfilling missing rows before adding a required-column constraint is schema migration.",
+    "source": "original",
+    "strata": [
+      "direct",
+      "en"
+    ]
+  },
+  "test-036": {
+    "family": "MH2",
+    "rationale": "Backfilling missing rows before adding a required-column constraint is schema migration.",
+    "source": "original",
+    "strata": [
+      "paraphrase",
+      "pt"
+    ]
+  },
+  "test-037": {
+    "family": "MH3",
+    "rationale": "Moving contact data into another table with rollback is schema migration.",
+    "source": "original",
+    "strata": [
+      "direct",
+      "en"
+    ]
+  },
+  "test-038": {
+    "family": "MH3",
+    "rationale": "Moving contact data into another table with rollback is schema migration.",
+    "source": "original",
+    "strata": [
+      "paraphrase",
+      "pt"
+    ]
+  },
+  "test-039": {
+    "family": "MH4",
+    "rationale": "Rolling out a new column and index safely changes database structure.",
+    "source": "original",
+    "strata": [
+      "direct",
+      "en"
+    ]
+  },
+  "test-040": {
+    "family": "MH4",
+    "rationale": "Rolling out a new column and index safely changes database structure.",
+    "source": "original",
+    "strata": [
+      "paraphrase",
+      "pt"
+    ]
+  },
+  "test-041": {
+    "family": "CH1",
+    "rationale": "Reordering Dockerfile dependencies and cached build layers is image construction.",
+    "source": "original",
+    "strata": [
+      "direct",
+      "en"
+    ]
+  },
+  "test-042": {
+    "family": "CH1",
+    "rationale": "Reordering Dockerfile dependencies and cached build layers is image construction.",
+    "source": "original",
+    "strata": [
+      "paraphrase",
+      "pt"
+    ]
+  },
+  "test-043": {
+    "family": "CH2",
+    "rationale": "Correcting architecture-specific image stages and binary copying is container build work.",
+    "source": "original",
+    "strata": [
+      "direct",
+      "en"
+    ]
+  },
+  "test-044": {
+    "family": "CH2",
+    "rationale": "Correcting architecture-specific image stages and binary copying is container build work.",
+    "source": "original",
+    "strata": [
+      "paraphrase",
+      "pt"
+    ]
+  },
+  "test-045": {
+    "family": "CH3",
+    "rationale": "Adjusting image user and file ownership to fix container startup is container build work.",
+    "source": "original",
+    "strata": [
+      "direct",
+      "en"
+    ]
+  },
+  "test-046": {
+    "family": "CH3",
+    "rationale": "Adjusting image user and file ownership to fix container startup is container build work.",
+    "source": "original",
+    "strata": [
+      "paraphrase",
+      "pt"
+    ]
+  },
+  "test-047": {
+    "family": "CH4",
+    "rationale": "Copying the compiled artifact into the runtime image is container build work, not CI repair.",
+    "source": "original",
+    "strata": [
+      "direct",
+      "en"
+    ]
+  },
+  "test-048": {
+    "family": "CH4",
+    "rationale": "Copying the compiled artifact into the runtime image is container build work, not CI repair.",
+    "source": "original",
+    "strata": [
+      "paraphrase",
+      "pt"
+    ]
+  },
+  "test-049": {
+    "family": "WH1",
+    "rationale": "Repairing a hosted runner's job steps and checkout path is CI workflow configuration.",
+    "source": "original",
+    "strata": [
+      "direct",
+      "en"
+    ]
+  },
+  "test-050": {
+    "family": "WH1",
+    "rationale": "Repairing a hosted runner's job steps and checkout path is CI workflow configuration.",
+    "source": "original",
+    "strata": [
+      "paraphrase",
+      "pt"
+    ]
+  },
+  "test-051": {
+    "family": "WH2",
+    "rationale": "Correcting token permissions in a release job is CI workflow configuration.",
+    "source": "original",
+    "strata": [
+      "direct",
+      "en"
+    ]
+  },
+  "test-052": {
+    "family": "WH2",
+    "rationale": "Correcting token permissions in a release job is CI workflow configuration.",
+    "source": "original",
+    "strata": [
+      "paraphrase",
+      "pt"
+    ]
+  },
+  "test-053": {
+    "family": "WH3",
+    "rationale": "Configuring dependency-cache restore and keys in a build job is CI workflow work.",
+    "source": "original",
+    "strata": [
+      "direct",
+      "en"
+    ]
+  },
+  "test-054": {
+    "family": "WH3",
+    "rationale": "Configuring dependency-cache restore and keys in a build job is CI workflow work.",
+    "source": "original",
+    "strata": [
+      "paraphrase",
+      "pt"
+    ]
+  },
+  "test-055": {
+    "family": "WH4",
+    "rationale": "Fixing pull-request workflow event filters is CI configuration, not test authoring.",
+    "source": "original",
+    "strata": [
+      "direct",
+      "en"
+    ]
+  },
+  "test-056": {
+    "family": "WH4",
+    "rationale": "Fixing pull-request workflow event filters is CI configuration, not test authoring.",
+    "source": "original",
+    "strata": [
+      "paraphrase",
+      "pt"
+    ]
+  },
+  "test-057": {
+    "family": "TH1",
+    "rationale": "Asserting retry outputs on success and exhaustion is behavioral source-code testing.",
+    "source": "original",
+    "strata": [
+      "direct",
+      "en"
+    ]
+  },
+  "test-058": {
+    "family": "TH1",
+    "rationale": "Asserting retry outputs on success and exhaustion is behavioral source-code testing.",
+    "source": "original",
+    "strata": [
+      "paraphrase",
+      "pt"
+    ]
+  },
+  "test-059": {
+    "family": "TH2",
+    "rationale": "Adding observable date-calculation cases is code testing, not CI configuration.",
+    "source": "original",
+    "strata": [
+      "direct",
+      "en"
+    ]
+  },
+  "test-060": {
+    "family": "TH2",
+    "rationale": "Adding observable date-calculation cases is code testing, not CI configuration.",
+    "source": "original",
+    "strata": [
+      "paraphrase",
+      "pt"
+    ]
+  },
+  "test-061": {
+    "family": "TH3",
+    "rationale": "Checking API response bodies and status through integration tests is code testing.",
+    "source": "original",
+    "strata": [
+      "direct",
+      "en"
+    ]
+  },
+  "test-062": {
+    "family": "TH3",
+    "rationale": "Checking API response bodies and status through integration tests is code testing.",
+    "source": "original",
+    "strata": [
+      "paraphrase",
+      "pt"
+    ]
+  },
+  "test-063": {
+    "family": "TH4",
+    "rationale": "Asserting literal serializer output on edge cases is code testing.",
+    "source": "original",
+    "strata": [
+      "direct",
+      "en"
+    ]
+  },
+  "test-064": {
+    "family": "TH4",
+    "rationale": "Asserting literal serializer output on edge cases is code testing.",
+    "source": "original",
+    "strata": [
+      "paraphrase",
+      "pt"
+    ]
+  },
+  "test-065": {
+    "family": "AH1",
+    "rationale": "Reporting keyboard and screen-reader defects in a modal is an accessibility audit.",
+    "source": "original",
+    "strata": [
+      "direct",
+      "en"
+    ]
+  },
+  "test-066": {
+    "family": "AH1",
+    "rationale": "Reporting keyboard and screen-reader defects in a modal is an accessibility audit.",
+    "source": "original",
+    "strata": [
+      "paraphrase",
+      "pt"
+    ]
+  },
+  "test-067": {
+    "family": "AH2",
+    "rationale": "Reviewing screen-reader table traversal and header semantics is an accessibility audit.",
+    "source": "original",
+    "strata": [
+      "direct",
+      "en"
+    ]
+  },
+  "test-068": {
+    "family": "AH2",
+    "rationale": "Reviewing screen-reader table traversal and header semantics is an accessibility audit.",
+    "source": "original",
+    "strata": [
+      "paraphrase",
+      "pt"
+    ]
+  },
+  "test-069": {
+    "family": "AH3",
+    "rationale": "Checking visual contrast against accessibility criteria is an audit, not redesign.",
+    "source": "original",
+    "strata": [
+      "direct",
+      "en"
+    ]
+  },
+  "test-070": {
+    "family": "AH3",
+    "rationale": "Checking visual contrast against accessibility criteria is an audit, not redesign.",
+    "source": "original",
+    "strata": [
+      "paraphrase",
+      "pt"
+    ]
+  },
+  "test-071": {
+    "family": "AH4",
+    "rationale": "Evaluating assistive-technology announcements and field errors is an audit.",
+    "source": "original",
+    "strata": [
+      "direct",
+      "en"
+    ]
+  },
+  "test-072": {
+    "family": "AH4",
+    "rationale": "Evaluating assistive-technology announcements and field errors is an audit.",
+    "source": "original",
+    "strata": [
+      "paraphrase",
+      "pt"
+    ]
+  },
+  "test-073": {
+    "family": "UH1",
+    "rationale": "Implementing responsive article columns and sidebar placement is web layout work.",
+    "source": "original",
+    "strata": [
+      "direct",
+      "en"
+    ]
+  },
+  "test-074": {
+    "family": "UH1",
+    "rationale": "Implementing responsive article columns and sidebar placement is web layout work.",
+    "source": "original",
+    "strata": [
+      "paraphrase",
+      "pt"
+    ]
+  },
+  "test-075": {
+    "family": "UH2",
+    "rationale": "Aligning product cards and grid spacing at tablet widths is responsive layout.",
+    "source": "original",
+    "strata": [
+      "direct",
+      "en"
+    ]
+  },
+  "test-076": {
+    "family": "UH2",
+    "rationale": "Aligning product cards and grid spacing at tablet widths is responsive layout.",
+    "source": "original",
+    "strata": [
+      "paraphrase",
+      "pt"
+    ]
+  },
+  "test-077": {
+    "family": "UH3",
+    "rationale": "Changing navigation breakpoints and visual arrangement is web layout, not an audit.",
+    "source": "original",
+    "strata": [
+      "direct",
+      "en"
+    ]
+  },
+  "test-078": {
+    "family": "UH3",
+    "rationale": "Changing navigation breakpoints and visual arrangement is web layout, not an audit.",
+    "source": "original",
+    "strata": [
+      "paraphrase",
+      "pt"
+    ]
+  },
+  "test-079": {
+    "family": "UH4",
+    "rationale": "Changing an empty state's typography, spacing, and hierarchy is web layout.",
+    "source": "original",
+    "strata": [
+      "direct",
+      "en"
+    ]
+  },
+  "test-080": {
+    "family": "UH4",
+    "rationale": "Changing an empty state's typography, spacing, and hierarchy is web layout.",
+    "source": "original",
+    "strata": [
+      "paraphrase",
+      "pt"
+    ]
+  },
+  "test-081": {
+    "family": "NH1",
+    "rationale": "Normalizing inconsistent survey categories is cleaning malformed dataset values.",
+    "source": "original",
+    "strata": [
+      "direct",
+      "en"
+    ]
+  },
+  "test-082": {
+    "family": "NH1",
+    "rationale": "Normalizing inconsistent survey categories is cleaning malformed dataset values.",
+    "source": "original",
+    "strata": [
+      "paraphrase",
+      "pt"
+    ]
+  },
+  "test-083": {
+    "family": "NH2",
+    "rationale": "Repairing inconsistent timestamps and missing identifiers is data cleaning, not charting.",
+    "source": "original",
+    "strata": [
+      "direct",
+      "en"
+    ]
+  },
+  "test-084": {
+    "family": "NH2",
+    "rationale": "Repairing inconsistent timestamps and missing identifiers is data cleaning, not charting.",
+    "source": "original",
+    "strata": [
+      "paraphrase",
+      "pt"
+    ]
+  },
+  "test-085": {
+    "family": "NH3",
+    "rationale": "Deduplicating contacts and reconciling blanks is data cleaning.",
+    "source": "original",
+    "strata": [
+      "direct",
+      "en"
+    ]
+  },
+  "test-086": {
+    "family": "NH3",
+    "rationale": "Deduplicating contacts and reconciling blanks is data cleaning.",
+    "source": "original",
+    "strata": [
+      "paraphrase",
+      "pt"
+    ]
+  },
+  "test-087": {
+    "family": "NH4",
+    "rationale": "Fixing shifted columns and malformed rows is data cleaning, not visualization.",
+    "source": "original",
+    "strata": [
+      "direct",
+      "en"
+    ]
+  },
+  "test-088": {
+    "family": "NH4",
+    "rationale": "Fixing shifted columns and malformed rows is data cleaning, not visualization.",
+    "source": "original",
+    "strata": [
+      "paraphrase",
+      "pt"
+    ]
+  },
+  "test-089": {
+    "family": "GH1",
+    "rationale": "Plotting trends from an already clean stock table is charting.",
+    "source": "original",
+    "strata": [
+      "direct",
+      "en"
+    ]
+  },
+  "test-090": {
+    "family": "GH1",
+    "rationale": "Plotting trends from an already clean stock table is charting.",
+    "source": "original",
+    "strata": [
+      "paraphrase",
+      "pt"
+    ]
+  },
+  "test-091": {
+    "family": "GH2",
+    "rationale": "Choosing axes and plotting a clean energy time series is charting.",
+    "source": "original",
+    "strata": [
+      "direct",
+      "en"
+    ]
+  },
+  "test-092": {
+    "family": "GH2",
+    "rationale": "Choosing axes and plotting a clean energy time series is charting.",
+    "source": "original",
+    "strata": [
+      "paraphrase",
+      "pt"
+    ]
+  },
+  "test-093": {
+    "family": "GH3",
+    "rationale": "Visually comparing verified district values is charting, not cleaning.",
+    "source": "original",
+    "strata": [
+      "direct",
+      "en"
+    ]
+  },
+  "test-094": {
+    "family": "GH3",
+    "rationale": "Visually comparing verified district values is charting, not cleaning.",
+    "source": "original",
+    "strata": [
+      "paraphrase",
+      "pt"
+    ]
+  },
+  "test-095": {
+    "family": "GH4",
+    "rationale": "Showing a distribution from clean transactions is charting.",
+    "source": "original",
+    "strata": [
+      "direct",
+      "en"
+    ]
+  },
+  "test-096": {
+    "family": "GH4",
+    "rationale": "Showing a distribution from clean transactions is charting.",
+    "source": "original",
+    "strata": [
+      "paraphrase",
+      "pt"
+    ]
+  },
+  "test-097": {
+    "family": "RH1",
+    "rationale": "Past log diagnosis and present outage coordination are equally requested separate skills.",
+    "source": "original",
+    "strata": [
+      "conflict",
+      "en"
+    ]
+  },
+  "test-098": {
+    "family": "RH1",
+    "rationale": "Past log diagnosis and present outage coordination are equally requested separate skills.",
+    "source": "original",
+    "strata": [
+      "conflict",
+      "pt"
+    ]
+  },
+  "test-099": {
+    "family": "RH2",
+    "rationale": "PDF extraction and cleaning an independent CSV are both requested without a primary task.",
+    "source": "original",
+    "strata": [
+      "conflict",
+      "en"
+    ]
+  },
+  "test-100": {
+    "family": "RH2",
+    "rationale": "PDF extraction and cleaning an independent CSV are both requested without a primary task.",
+    "source": "original",
+    "strata": [
+      "conflict",
+      "pt"
+    ]
+  },
+  "test-101": {
+    "family": "RH3",
+    "rationale": "Existing query tuning and a new column migration are distinct, equally requested skills.",
+    "source": "original",
+    "strata": [
+      "conflict",
+      "en"
+    ]
+  },
+  "test-102": {
+    "family": "RH3",
+    "rationale": "Existing query tuning and a new column migration are distinct, equally requested skills.",
+    "source": "original",
+    "strata": [
+      "conflict",
+      "pt"
+    ]
+  },
+  "test-103": {
+    "family": "RH4",
+    "rationale": "Container image repair and CI workflow repair are distinct requested deliverables.",
+    "source": "original",
+    "strata": [
+      "conflict",
+      "en"
+    ]
+  },
+  "test-104": {
+    "family": "RH4",
+    "rationale": "Container image repair and CI workflow repair are distinct requested deliverables.",
+    "source": "original",
+    "strata": [
+      "conflict",
+      "pt"
+    ]
+  },
+  "test-105": {
+    "family": "RH5",
+    "rationale": "Accessibility auditing and responsive layout implementation are both requested equally.",
+    "source": "original",
+    "strata": [
+      "conflict",
+      "en"
+    ]
+  },
+  "test-106": {
+    "family": "RH5",
+    "rationale": "Accessibility auditing and responsive layout implementation are both requested equally.",
+    "source": "original",
+    "strata": [
+      "conflict",
+      "pt"
+    ]
+  },
+  "test-107": {
+    "family": "RH6",
+    "rationale": "Writing code tests and planning a schema migration are separate equal deliverables.",
+    "source": "original",
+    "strata": [
+      "conflict",
+      "en"
+    ]
+  },
+  "test-108": {
+    "family": "RH6",
+    "rationale": "Writing code tests and planning a schema migration are separate equal deliverables.",
+    "source": "original",
+    "strata": [
+      "conflict",
+      "pt"
+    ]
+  },
+  "test-109": {
+    "family": "RH7",
+    "rationale": "Legal interpretation is outside the twelve catalogued skill descriptions.",
+    "source": "original",
+    "strata": [
+      "out_of_scope",
+      "en"
+    ]
+  },
+  "test-110": {
+    "family": "RH7",
+    "rationale": "Legal interpretation is outside the twelve catalogued skill descriptions.",
+    "source": "original",
+    "strata": [
+      "out_of_scope",
+      "pt"
+    ]
+  },
+  "test-111": {
+    "family": "RH8",
+    "rationale": "Travel planning and reservations are outside the twelve catalogued skill descriptions.",
+    "source": "original",
+    "strata": [
+      "out_of_scope",
+      "en"
+    ]
+  },
+  "test-112": {
+    "family": "RH8",
+    "rationale": "Travel planning and reservations are outside the twelve catalogued skill descriptions.",
+    "source": "original",
+    "strata": [
+      "out_of_scope",
+      "pt"
+    ]
+  },
+  "test-113": {
+    "family": "RH9",
+    "rationale": "Audio transcription is outside the PDF extraction and other catalogued descriptions.",
+    "source": "original",
+    "strata": [
+      "out_of_scope",
+      "en"
+    ]
+  },
+  "test-114": {
+    "family": "RH9",
+    "rationale": "Audio transcription is outside the PDF extraction and other catalogued descriptions.",
+    "source": "original",
+    "strata": [
+      "out_of_scope",
+      "pt"
+    ]
+  },
+  "test-115": {
+    "family": "RH10",
+    "rationale": "Sending email and confirming delivery are outside the twelve catalogued descriptions.",
+    "source": "original",
+    "strata": [
+      "out_of_scope",
+      "en"
+    ]
+  },
+  "test-116": {
+    "family": "RH10",
+    "rationale": "Sending email and confirming delivery are outside the twelve catalogued descriptions.",
+    "source": "original",
+    "strata": [
+      "out_of_scope",
+      "pt"
+    ]
+  },
+  "test-117": {
+    "family": "RH11",
+    "rationale": "Personal investment recommendations are outside the twelve catalogued descriptions.",
+    "source": "original",
+    "strata": [
+      "out_of_scope",
+      "en"
+    ]
+  },
+  "test-118": {
+    "family": "RH11",
+    "rationale": "Personal investment recommendations are outside the twelve catalogued descriptions.",
+    "source": "original",
+    "strata": [
+      "out_of_scope",
+      "pt"
+    ]
+  },
+  "test-119": {
+    "family": "RH12",
+    "rationale": "Provisioning a virtual server is outside the container image and other catalogued descriptions.",
+    "source": "original",
+    "strata": [
+      "out_of_scope",
+      "en"
+    ]
+  },
+  "test-120": {
+    "family": "RH12",
+    "rationale": "Provisioning a virtual server is outside the container image and other catalogued descriptions.",
+    "source": "original",
+    "strata": [
+      "out_of_scope",
+      "pt"
+    ]
+  }
+}

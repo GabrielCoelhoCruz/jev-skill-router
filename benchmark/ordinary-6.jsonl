@@ -1,0 +1,6 @@
+{"id":"ordinary-01","request":"What is 2 + 2?","expected":"no_skill"}
+{"id":"ordinary-02","request":"Olá, tudo bem?","expected":"no_skill"}
+{"id":"ordinary-03","request":"Explain photosynthesis in one sentence.","expected":"no_skill"}
+{"id":"ordinary-04","request":"Qual é a capital do Brasil?","expected":"no_skill"}
+{"id":"ordinary-05","request":"Rewrite this sentence politely: I am late.","expected":"no_skill"}
+{"id":"ordinary-06","request":"Traduza 'good morning' para português.","expected":"no_skill"}
