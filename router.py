@@ -16,9 +16,9 @@ from collections import Counter
 from pathlib import Path
 
 ENDPOINT = "https://api.typesafe.ai/v1/systemone"
-MODEL = "jev-latest"
-MODEL_ID = re.compile(r"jev-(?:\d+\.\d+\.\d+|[a-z][a-z0-9-]*)")
-CONCRETE_MODEL = re.compile(r"jev-\d+\.\d+\.\d+")
+MODEL = "jev-preview"
+MODEL_ID = re.compile(r"jev-(?:[0-9]+\.[0-9]+\.[0-9]+|[a-z][a-z0-9-]*)")
+CONCRETE_MODEL = re.compile(r"jev-[0-9]+\.[0-9]+\.[0-9]+")
 INVALID_REPLIES = ("api_invalid_response", "api_model_mismatch", "api_model_unresolved")
 INPUT_USD_PER_MILLION = 0.042
 SENTINELS = ("__no_skill__", "__review__")
@@ -128,6 +128,7 @@ def jev(request, catalogue, api_key, model=MODEL):
     class NoRedirect(urllib.request.HTTPRedirectHandler):
         def redirect_request(self, request, fp, code, msg, headers, newurl):
             return None
+    served = None
     try:
         with urllib.request.build_opener(NoRedirect()).open(req, timeout=30) as response:
             body = response.read(1_000_001)
@@ -137,14 +138,14 @@ def jev(request, catalogue, api_key, model=MODEL):
         if declared_length is not None and len(body) < int(declared_length):
             return sent(api_review("api_unavailable"))
         raw = json.loads(body)
+        served, failure = model_check(model, raw["model"])
+        if failure:
+            return sent(api_review(failure), served)
         answer = raw["answers"]["route"]
         probabilities = answer["probabilities"]
         choice = answer["choice"]
         confidence = answer["confidence"]
         usage = raw.get("usage")
-        served, failure = model_check(model, raw["model"])
-        if failure:
-            return sent(api_review(failure), served)
         if answer["type"] != "choice" or not isinstance(probabilities, dict) or set(probabilities) != set(criteria):
             raise ValueError("unexpected type or options")
         if not all(type(p) in (int, float) and math.isfinite(p) and 0 <= p <= 1 for p in probabilities.values()) or abs(sum(probabilities.values()) - 1) > 0.02:
@@ -165,7 +166,7 @@ def jev(request, catalogue, api_key, model=MODEL):
     except (urllib.error.URLError, TimeoutError, OSError, http.client.HTTPException):
         return sent(api_review("api_unavailable"))
     except (ValueError, KeyError, TypeError, UnicodeError):
-        return sent(api_review("api_invalid_response"))
+        return sent(api_review("api_invalid_response"), served)
 
 
 def route(request, catalogue, *, dry_run=False, api_key=None, model=MODEL):

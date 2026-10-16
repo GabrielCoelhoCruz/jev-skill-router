@@ -99,7 +99,7 @@ def main():
             if args.feature in ("all", "model"):
                 dataset = scratch / "model.jsonl"
                 dataset.write_text(json.dumps({"id": "public-example", "request": "Reduce latency of a slow SELECT", "expected": "sql-tuning"}) + "\n")
-                for name, extra, expected in (("model-default", [], "jev-latest"), ("model-explicit", ["--model", "jev-1.14.0"], "jev-1.14.0")):
+                for name, extra, expected in (("model-default", [], "jev-preview"), ("model-explicit", ["--model", "jev-1.14.0"], "jev-1.14.0")):
                     report = scratch / f"{name}.json"
                     run(name, ["router.py", "eval", "--dry-run", "--dataset", str(dataset), "--output", str(report), *extra], present_key=True)
                     (evidence / f"{name}-report.json").write_bytes(report.read_bytes())
