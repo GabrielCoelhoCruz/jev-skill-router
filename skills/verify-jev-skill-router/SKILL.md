@@ -22,13 +22,16 @@ python3 "$SKILL/scripts/verify.py" --repo "$PWD" --evidence "$HOME/.capy/work/je
 
 The command above prints `"ready": true`, the Python version, the runtime SHA-256, the checkout `head`, and `dirty`.
 Compare `head` with the commit you were asked to verify. A dirty checkout proves only its working tree.
+`dirty` is true when a tracked file changed or a new untracked file exists. Files that `.gitignore` lists, such as `__pycache__/`, do not count.
+The router's own `provenance.source_dirty` report field still ignores untracked files. Do not read one as the other.
 It reads files without calling an API or creating the evidence directory.
 If it fails, correct `--repo` or use Python 3.11+ before driving the CLI.
 
 ## Drive
 
 Choose a fresh evidence path. The helper refuses an existing directory.
-It removes configured credentials from child processes and denies socket connection and name resolution.
+It removes configured credentials from child processes.
+A Python audit hook in each Python child denies `socket.connect` and `socket.getaddrinfo`. That covers the TCP connection and DNS lookup that the router's `urllib` call makes. [features/README.md](features/README.md) lists what the hook does not cover.
 Its denial control must fail before the selected feature runs. Dry-run also runs with an invalid dummy key present.
 
 ```sh

@@ -24,7 +24,7 @@ def main():
         parser.error("use Python 3.11 or newer")
     source = hashlib.sha256((repo / "router.py").read_bytes()).hexdigest()
     head = subprocess.run(["git", "rev-parse", "HEAD"], cwd=repo, capture_output=True, text=True)
-    dirty = subprocess.run(["git", "status", "--porcelain", "--untracked-files=no"], cwd=repo, capture_output=True, text=True)
+    dirty = subprocess.run(["git", "status", "--porcelain", "--untracked-files=normal"], cwd=repo, capture_output=True, text=True)
     commit = head.stdout.strip() if head.returncode == 0 else None
     if args.doctor:
         print(json.dumps({"ready": True, "python": sys.version.split()[0], "router_sha256": source,

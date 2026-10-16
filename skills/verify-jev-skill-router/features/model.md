@@ -8,5 +8,5 @@ Run `python3 router.py eval --dry-run --dataset path/to/cases.jsonl --output pat
 Use `--feature model`. Expect `jev-1.13.0` without `--model`, `jev-1.14.0` with it, and the checkout HEAD as `source_commit` in both saved reports.
 `route --dry-run --model 'jev latest'` must exit 2, emit `invalid`, and name the `--model` rule on stderr.
 ## Gotchas
-Dry-run sends nothing, so this proves CLI parsing and report provenance, not the model id sent over HTTP. Unit tests cover the request body with a local fake server.
+Dry-run sends nothing, so this proves CLI parsing and report provenance, not the model id sent over HTTP. `tests/test_router.py` covers the HTTP body and the reply check at the `route()` call with a local fake server, not through the CLI.
 Change the expected default here in the same commit that changes `MODEL` in `router.py`. Pin version IDs, never an alias such as `jev-latest`: aliases move without a code change.

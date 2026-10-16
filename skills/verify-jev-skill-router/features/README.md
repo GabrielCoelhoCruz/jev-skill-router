@@ -1,7 +1,7 @@
 # CLI feature map
 
 Run `scripts/verify.py` as documented in [the verification skill](../SKILL.md).
-Each feature uses real CLI subprocesses with credentials removed and network denied.
+Each feature uses real CLI subprocesses with credentials removed. In those Python children, an audit hook denies `socket.connect` and `socket.getaddrinfo`.
 
 | Feature | User goal | Helper selection |
 | --- | --- | --- |
@@ -17,6 +17,7 @@ Each feature uses real CLI subprocesses with credentials removed and network den
 These paths are NOT TESTED here. Report them as NOT TESTED, never as passing, when this helper is the only proof.
 
 - Live routing and live evaluation with a real `TYPESAFE_API_KEY`. They need their own approved protocol and budget.
-- The model id and request body sent over HTTP. Only the offline unit tests cover them, with a local fake server.
+- The model id and request body sent over HTTP. `tests/test_router.py` covers them at the `route()` call with a local fake server: a byte pin of the default-model body, and an explicit `jev-1.14.0` that must reach the body and match the reply. The CLI path from `--model` to the HTTP body has no test.
+- Network isolation of the host. The hook loads through `sitecustomize` in Python children only. It does not deny UDP `sendto`, `socket.gethostbyname`, `python -I` children, or processes that are not Python.
 - `eval --repeats` and `eval --metadata` family reports.
 - Accuracy on any dataset. The one-case evaluation is a smoke test.
