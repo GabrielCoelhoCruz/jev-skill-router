@@ -44,6 +44,8 @@ Set `TYPESAFE_API_KEY` in the process environment before this command. Do not us
 
 ## Run locally
 
+For CLI verification without a secret, use [the offline verification skill](skills/verify-jev-skill-router/SKILL.md). Its helper strips configured credentials, denies network access, drives the real CLI, and preserves command outputs after cleanup. The feature map covers help, routing, evaluation files, custom catalogues, and archived replay.
+
 From the repository root:
 
 ```sh
