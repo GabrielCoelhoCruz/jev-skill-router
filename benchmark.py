@@ -1,13 +1,21 @@
-"""Replay the published-main Jev observations without credentials or network."""
+"""Replay the published-main Jev observations without credentials or network.
+
+The archive was measured at commit 37a05e2 with the pinned model jev-1.13.0; the summary names that
+router.py hash. Its records predate requested_model and served_model, and replay rejects records that
+carry them. The lexical comparator runs on the current router.py, so replay refuses to run when the
+lexical baseline code differs from the measured commit.
+"""
 
 import argparse
 import hashlib
+import inspect
 import json
 import math
 import random
 from collections import Counter
 from pathlib import Path
 
+import router
 from router import INPUT_USD_PER_MILLION, InputError, catalogue_from, route
 
 ROOT = Path(__file__).resolve().parent
@@ -20,7 +28,14 @@ ORDINARY_RESULTS_SHA = "9c89fb052f9bad2a84efa488a6b50f7ff4376ee67358ee95bd229cb3
 CATALOGUE_SHA = "84ea9cfdd29789ae79434f330b5cbc96c8d9c8c4df4022a2924b3cf40e5bf4ac"
 ROUTER_SHA = "cff71463063cfc572f935feaf67fb03e5cc30d9469f25c59cbcf08d0cdc5eee2"
 CONFIG_SHA = "cc8a66f9cc67043e400b1edd62fb7a23efd8dca209c4bd26c76e72412a4882df"
+LEXICAL_SHA = "6dcfc3828a57a78e0ebd6b08183e8db60b207e42c0185960ed0714b33e8f80b8"
 ERRORS = {"api_unavailable", "api_invalid_response", "api_model_mismatch"}
+
+
+def lexical_sha(module=router):
+    parts = (module.validate_request, module.catalogue_from, module.words, module.lexical, module.concentration, module.decision)
+    source = "".join(inspect.getsource(part) for part in parts) + " ".join(sorted(module.STOP))
+    return hashlib.sha256(source.encode()).hexdigest()
 
 
 def read_pinned(path, digest):
@@ -133,10 +148,11 @@ def replay(live_path, ordinary_path):
     metadata = json.loads(read_pinned(DATA / "metadata.json", METADATA_SHA))
     ordinary = [json.loads(line) for line in read_pinned(DATA / "ordinary-6.jsonl", ORDINARY_SHA).splitlines() if line.strip()]
     catalogue = catalogue_from(json.loads(read_pinned(ROOT / "data/catalogue.json", CATALOGUE_SHA)))
-    read_pinned(ROOT / "router.py", ROUTER_SHA)
     settings = {"model": "jev-1.13.0", "router_sha256": ROUTER_SHA, "catalogue_sha256": CATALOGUE_SHA}
     if hashlib.sha256(json.dumps(settings, sort_keys=True).encode()).hexdigest() != CONFIG_SHA:
         raise InputError("frozen runtime configuration changed")
+    if lexical_sha() != LEXICAL_SHA:
+        raise InputError("lexical baseline changed since the measured commit; lexical_same_120 would describe new code")
     labels = {skill["id"] for skill in catalogue}
     family_counts = Counter(v["family"] for v in metadata.values())
     languages = Counter(language for item in metadata.values() for language in item["strata"] if language in ("en", "pt"))

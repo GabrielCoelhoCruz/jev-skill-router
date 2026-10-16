@@ -7,5 +7,5 @@ Run `python3 benchmark.py` from a checkout with the original benchmark files.
 ## Driving it with the CLI helper
 Use `--feature replay`. Expect exit 0 and stdout byte-identical to `benchmark/summary.json`, with the network denial control active.
 ## Gotchas
-These are known synthetic observations, not fresh heldout results. The replay pins the measured source and rejects a changed runtime.
-Preserve that history when changing production code. Do not relabel historical scores as new measurements.
+These are known synthetic observations, not fresh heldout results. They came from `router.py` SHA-256 `cff71463…` with the pinned model `jev-1.13.0`; the summary names both. The replay pins the archive, corpus and catalogue bytes. It no longer requires the current `router.py` to equal that measured runtime, because the default model changed after the measurement. It does pin the lexical comparator source (`LEXICAL_SHA`) and exits 2 with `lexical baseline changed` when that code differs from the measured commit.
+The archive records predate `requested_model` and `served_model`. The replay rejects a record that carries them, so the archive cannot be relabelled as a run of an alias such as `jev-preview`. Do not relabel historical scores as new measurements.

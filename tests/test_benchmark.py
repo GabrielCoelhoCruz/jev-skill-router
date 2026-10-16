@@ -1,3 +1,4 @@
+import hashlib
 import unittest
 import tempfile
 import json
@@ -49,6 +50,9 @@ class BenchmarkTests(unittest.TestCase):
         self.assertEqual((summary["ordinary_controls"]["expected_no_skill"],
                           summary["ordinary_controls"]["exact"], summary["lexical_same_120"]["exact"]),
                          (6, 6, 31))
+        self.assertEqual((summary["model"], summary["router_sha256"]),
+                         ("jev-1.13.0", "cff71463063cfc572f935feaf67fb03e5cc30d9469f25c59cbcf08d0cdc5eee2"))
+        self.assertNotEqual(hashlib.sha256((DATA.parent / "router.py").read_bytes()).hexdigest(), summary["router_sha256"])
         with patch("benchmark.LIVE_SHA", "0" * 64), self.assertRaisesRegex(InputError, "pinned input changed"):
             replay(DATA / "live-360.jsonl", DATA / "ordinary-6-results.jsonl")
         with tempfile.TemporaryDirectory() as folder:
@@ -99,6 +103,46 @@ class BenchmarkTests(unittest.TestCase):
         with self.assertRaisesRegex(InputError, "choice contradicts"):
             check(high, 0.5, "model_choice")
 
+    def test_replay_refuses_a_changed_lexical_baseline_before_reporting(self):
+        import router
+
+        original = router.lexical
+
+        def changed(request, catalogue, reason="offline"):
+            return original(request, catalogue, reason)
+
+        for target, value in (("router.lexical", changed), ("router.STOP", router.STOP | {"slow"})):
+            with self.subTest(target=target), patch(target, value), \
+                    self.assertRaisesRegex(InputError, "lexical baseline changed"):
+                replay(DATA / "live-360.jsonl", DATA / "ordinary-6-results.jsonl")
+        run = subprocess.run([sys.executable, str(DATA.parent / "benchmark.py")], cwd=DATA.parent, capture_output=True, text=True)
+        self.assertEqual(run.stdout.encode(), (DATA / "summary.json").read_bytes())
+
+    @unittest.skipUnless(subprocess.run(["git", "cat-file", "-e", "37a05e2ad3edb145f47ccaffdbc151c5b37856d0^{commit}"],
+                                        cwd=DATA.parent, capture_output=True).returncode == 0,
+                         "needs the archived runtime commit in the local git history")
+    def test_lexical_pin_matches_the_archived_runtime_commit(self):
+        import importlib.util
+        import benchmark
+
+        source = subprocess.run(["git", "show", "37a05e2ad3edb145f47ccaffdbc151c5b37856d0:router.py"], cwd=DATA.parent,
+                                capture_output=True, check=True).stdout
+        self.assertEqual(hashlib.sha256(source).hexdigest(), benchmark.ROUTER_SHA)
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder) / "router.py"
+            path.write_bytes(source)
+            spec = importlib.util.spec_from_file_location("archived_router", path)
+            archived = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(archived)
+            self.assertEqual(benchmark.lexical_sha(archived), benchmark.LEXICAL_SHA)
+
+    def test_help_names_the_archive_without_placeholders(self):
+        run = subprocess.run([sys.executable, str(DATA.parent / "benchmark.py"), "--help"], capture_output=True, text=True)
+        self.assertEqual(run.returncode, 0)
+        self.assertNotIn("ROUTER_SHA", run.stdout)
+        self.assertNotIn("runtime_commit", run.stdout)
+        self.assertIn("jev-1.13.0", run.stdout)
+
     def test_frozen_runtime_decisions_pass_offline_policy_mirror(self):
         catalogue = [{"id": "only-skill", "description": "Fix this specialist task", "examples": ["Fix task"]}]
         cases = [{"id": "one", "expected": "review"}]
@@ -118,8 +162,12 @@ class BenchmarkTests(unittest.TestCase):
                     return BytesIO(json.dumps(response).encode())
             with self.subTest(choice=choice, confidence=confidence), patch("urllib.request.build_opener", return_value=Opener()):
                 result = route("Fix task", catalogue, api_key="fake-test-key")
-                self.assertEqual((result["outcome"], result["reason"]), (outcome, reason))
-                verify([{"id": "one", "repeat": 1, "decision": result, "latency_ms": 10}], cases, {"only-skill"}, 1)
+                self.assertEqual((result["outcome"], result["reason"], result["requested_model"], result["served_model"]),
+                                 (outcome, reason, "jev-preview", "jev-1.13.0"))
+                archived = {key: value for key, value in result.items() if key not in ("requested_model", "served_model")}
+                verify([{"id": "one", "repeat": 1, "decision": archived, "latency_ms": 10}], cases, {"only-skill"}, 1)
+                with self.assertRaisesRegex(InputError, "unexpected decision fields"):
+                    verify([{"id": "one", "repeat": 1, "decision": result, "latency_ms": 10}], cases, {"only-skill"}, 1)
 
     def test_error_remains_unscored_and_claimed_metadata_cannot_be_ignored(self):
         case = [{"id": "one", "expected": "review"}]
@@ -128,6 +176,7 @@ class BenchmarkTests(unittest.TestCase):
         verify([row], case, {"only-skill"}, 1)
         self.assertEqual((score([row], case)["exact"], score([row], case)["api_errors"]), (0, 1))
         for altered in ({**error, "model": "jev-other"},
+                        {**error, "requested_model": "jev-latest", "served_model": None},
                         {**error, "source": "jev"},
                         {**error, "usage": {**error["usage"], "input_tokens": 8}},
                         {**error, "usage": {**error["usage"], "estimated_input_usd": 1.0}}):

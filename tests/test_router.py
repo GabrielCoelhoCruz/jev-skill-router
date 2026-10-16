@@ -157,8 +157,10 @@ class RouterTests(unittest.TestCase):
         ]
         for request, catalogue, expected_hash in cases:
             with self.subTest(request=request), local_api(choice_response()) as received:
+                route(request, catalogue, api_key="fake-test-key", model="jev-1.13.0")
                 route(request, catalogue, api_key="fake-test-key")
             self.assertEqual(hashlib.sha256(received.raw[0]).hexdigest(), expected_hash)
+            self.assertEqual(json.loads(received.raw[1]), {**json.loads(received.raw[0]), "model": "jev-preview"})
 
     def test_explicit_model_reaches_http_body_and_reply_check(self):
         with local_api(choice_response(model="jev-1.14.0")) as received:
@@ -166,9 +168,95 @@ class RouterTests(unittest.TestCase):
         self.assertEqual([body["model"] for body in received], ["jev-1.14.0"])
         self.assertEqual((answer["outcome"], answer["skill_id"], answer["source"], answer["reason"]),
                          ("route", "container-build", "jev", "model_choice"))
+        self.assertEqual((answer["requested_model"], answer["served_model"]), ("jev-1.14.0", "jev-1.14.0"))
         with local_api(choice_response(model="jev-1.13.0")):
             mismatch = route("Fix the Dockerfile image build", CATALOGUE, api_key="fake-test-key", model="jev-1.14.0")
-        self.assertEqual((mismatch["outcome"], mismatch["reason"]), ("review", "api_model_mismatch"))
+        self.assertEqual((mismatch["outcome"], mismatch["source"], mismatch["reason"], mismatch["probabilities"],
+                          mismatch["requested_model"], mismatch["served_model"]),
+                         ("review", "api", "api_model_mismatch", {}, "jev-1.14.0", "jev-1.13.0"))
+
+    def test_default_alias_accepts_concrete_resolution_and_keeps_fields_apart(self):
+        with local_api(choice_response(model="jev-1.14.0")) as received:
+            answer = route("Fix the Dockerfile image build", CATALOGUE, api_key="fake-test-key")
+        self.assertEqual([body["model"] for body in received], ["jev-preview"])
+        self.assertEqual((answer["outcome"], answer["skill_id"], answer["reason"], answer["requested_model"], answer["served_model"]),
+                         ("route", "container-build", "model_choice", "jev-preview", "jev-1.14.0"))
+        with local_api(choice_response(model="jev-1.13.0")) as received:
+            latest = route("Fix the Dockerfile image build", CATALOGUE, api_key="fake-test-key", model="jev-latest")
+        self.assertEqual([body["model"] for body in received], ["jev-latest"])
+        self.assertEqual((latest["outcome"], latest["requested_model"], latest["served_model"]),
+                         ("route", "jev-latest", "jev-1.13.0"))
+
+    def test_reply_without_a_concrete_version_is_never_filled_with_the_alias(self):
+        for reported in ("jev-latest", "jev-1.14", "jev-preview", None, 1.14):
+            with self.subTest(reported=reported), local_api(choice_response(model=reported)):
+                answer = route("Fix the Dockerfile image build", CATALOGUE, api_key="fake-test-key")
+            self.assertEqual((answer["outcome"], answer["source"], answer["reason"], answer["probabilities"],
+                              answer["requested_model"], answer["served_model"]),
+                             ("review", "api", "api_model_unresolved", {}, "jev-preview", None))
+        missing = choice_response()
+        del missing["model"]
+        with local_api(missing):
+            answer = route("Fix the Dockerfile image build", CATALOGUE, api_key="fake-test-key")
+        self.assertEqual((answer["reason"], answer["requested_model"], answer["served_model"]),
+                         ("api_invalid_response", "jev-preview", None))
+        with patch("urllib.request.build_opener", side_effect=OSError("offline")):
+            failed = route("Fix the Dockerfile image build", CATALOGUE, api_key="fake-test-key")
+        self.assertEqual((failed["reason"], failed["requested_model"], failed["served_model"]),
+                         ("api_unavailable", "jev-preview", None))
+
+    def test_model_ids_accept_ascii_digits_only(self):
+        arabic_indic = "jev-\u0661.\u0661\u0663.\u0660"
+        with self.assertRaisesRegex(InputError, "--model must be"):
+            route("Fix the Dockerfile image build", CATALOGUE, dry_run=True, model=arabic_indic)
+        cli = subprocess.run([sys.executable, str(ROOT / "router.py"), "route", "--dry-run", "--model", arabic_indic,
+                              "--request", "Fix the Dockerfile"], cwd=ROOT, capture_output=True, text=True)
+        self.assertEqual((cli.returncode, json.loads(cli.stdout)["outcome"]), (2, "invalid"))
+        with local_api(choice_response(model=arabic_indic)):
+            answer = route("Fix the Dockerfile image build", CATALOGUE, api_key="fake-test-key")
+        self.assertEqual((answer["outcome"], answer["reason"], answer["requested_model"], answer["served_model"]),
+                         ("review", "api_model_unresolved", "jev-preview", None))
+
+    def test_invalid_schema_keeps_the_concrete_version_that_answered(self):
+        broken = choice_response(model="jev-1.13.0")
+        broken["answers"]["route"]["type"] = "noul"
+        no_answers = {"model": "jev-1.14.0", "usage": {"input_tokens": 100, "output_tokens": 20}}
+        for reply, requested, served in ((broken, "jev-1.13.0", "jev-1.13.0"), (broken, "jev-preview", "jev-1.13.0"),
+                                         (no_answers, "jev-preview", "jev-1.14.0")):
+            with self.subTest(requested=requested, served=served), local_api(reply):
+                answer = route("Fix the Dockerfile image build", CATALOGUE, api_key="fake-test-key", model=requested)
+            self.assertEqual((answer["outcome"], answer["source"], answer["reason"], answer["probabilities"],
+                              answer["requested_model"], answer["served_model"]),
+                             ("review", "api", "api_invalid_response", {}, requested, served))
+        with local_api(broken):
+            report = evaluate([{"id": "one", "request": "Fix the Dockerfile image build", "expected": "container-build"}],
+                              CATALOGUE, api_key="fake-test-key")
+        self.assertEqual({key: report["summary"][key] for key in ("served_models", "unknown_served_model", "invalid_responses", "api_failures", "correct")},
+                         {"served_models": {"jev-1.13.0": 1}, "unknown_served_model": 0, "invalid_responses": 1, "api_failures": 0, "correct": 0})
+
+    def test_offline_paths_send_no_model_and_report_no_served_model(self):
+        with patch("urllib.request.build_opener", side_effect=AssertionError("network used")):
+            dry = route("Fix the Dockerfile image build", CATALOGUE, dry_run=True, api_key="fake-test-key")
+            keyless = route("Fix the Dockerfile image build", CATALOGUE)
+        self.assertEqual([(d["source"], d["requested_model"], d["served_model"]) for d in (dry, keyless)],
+                         [("lexical", None, None), ("validation", None, None)])
+
+    def test_eval_counts_served_models_and_reads_reports_without_model_fields(self):
+        cases = [{"id": "one", "request": "Fix the Dockerfile image build", "expected": "container-build"},
+                 {"id": "two", "request": "Build the Docker image", "expected": "container-build"}]
+        with local_api(choice_response(model="jev-1.14.0")):
+            report = evaluate(cases, CATALOGUE, api_key="fake-test-key")
+        with local_api(choice_response(model="jev-latest")):
+            unresolved = evaluate(cases, CATALOGUE, api_key="fake-test-key")
+        self.assertEqual((report["summary"]["served_models"], report["summary"]["unknown_served_model"],
+                          report["summary"]["correct"]), ({"jev-1.14.0": 2}, 0, 2))
+        self.assertEqual((unresolved["summary"]["served_models"], unresolved["summary"]["unknown_served_model"],
+                          unresolved["summary"]["invalid_responses"], unresolved["summary"]["api_failures"]), ({}, 2, 2, 0))
+        historical = [{**row, "decision": {k: v for k, v in row["decision"].items() if k not in ("requested_model", "served_model")}}
+                      for row in report["cases"]]
+        labels = {entry["id"] for entry in CATALOGUE} | {"review", "no_skill"}
+        regraded = grade(historical, labels, [("one", 1), ("two", 1)])["summary"]
+        self.assertEqual((regraded["correct"], regraded["served_models"], regraded["unknown_served_model"]), (2, {}, 2))
 
     def test_local_http_uncertainty_missing_usage_and_invalid_schema(self):
         with local_api(choice_response(confidence=0.4, usage=False)):
@@ -176,7 +264,7 @@ class RouterTests(unittest.TestCase):
         self.assertEqual((uncertain["outcome"], uncertain["reason"], uncertain["usage"]["input_tokens"]),
                          ("review", "uncertain", None))
         with local_api(choice_response(model="jev-unsupported")):
-            invalid = route("Fix the Dockerfile image build", CATALOGUE, api_key="fake-test-key")
+            invalid = route("Fix the Dockerfile image build", CATALOGUE, api_key="fake-test-key", model="jev-1.13.0")
         self.assertEqual((invalid["outcome"], invalid["reason"], invalid["probabilities"]),
                          ("review", "api_model_mismatch", {}))
         with local_api(b"not json"):
@@ -401,6 +489,12 @@ class RouterTests(unittest.TestCase):
             unsupported = subprocess.run(cmd + ["--catalogue", str(ROOT / "data/catalogue.json"), "--model", "other-model"], capture_output=True, text=True)
             self.assertEqual(unsupported.returncode, 2)
             self.assertIn("--model must be", unsupported.stderr)
+            partial = subprocess.run(cmd + ["--catalogue", str(ROOT / "data/catalogue.json"), "--model", "jev-1.14"], capture_output=True, text=True)
+            self.assertEqual((partial.returncode, json.loads(partial.stdout)["served_model"]), (2, None))
+            self.assertIn("pinned Jev version such as jev-1.14.0", partial.stderr)
+            preview = subprocess.run(cmd + ["--catalogue", str(ROOT / "data/catalogue.json"), "--model", "jev-preview"], capture_output=True, text=True)
+            self.assertEqual((preview.returncode, json.loads(preview.stdout)["source"], json.loads(preview.stdout)["served_model"]),
+                             (0, "lexical", None))
 
 
 if __name__ == "__main__":
