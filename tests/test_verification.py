@@ -45,6 +45,18 @@ class VerificationTests(unittest.TestCase):
             self.assertEqual((default, explicit), ("jev-1.13.0", "jev-1.14.0"))
             self.assertEqual(json.loads((evidence / "model-invalid.stdout").read_text())["outcome"], "invalid")
 
+    @unittest.skipUnless((ROOT / ".git").exists(), "needs a git checkout to clone")
+    def test_doctor_reports_new_untracked_file_as_dirty(self):
+        with tempfile.TemporaryDirectory() as folder:
+            checkout = Path(folder) / "checkout"
+            subprocess.run(["git", "clone", "--quiet", str(ROOT), str(checkout)], check=True)
+            command = [sys.executable, str(HELPER), "--repo", str(checkout), "--evidence", str(Path(folder) / "unused"), "--doctor"]
+            clean = json.loads(subprocess.run(command, capture_output=True, text=True, check=True).stdout)["dirty"]
+            (checkout / "new_module.py").write_text("")
+            untracked = json.loads(subprocess.run(command, capture_output=True, text=True, check=True).stdout)["dirty"]
+            self.assertEqual((clean, untracked), (False, True))
+            self.assertFalse((Path(folder) / "unused").exists())
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -160,6 +160,16 @@ class RouterTests(unittest.TestCase):
                 route(request, catalogue, api_key="fake-test-key")
             self.assertEqual(hashlib.sha256(received.raw[0]).hexdigest(), expected_hash)
 
+    def test_explicit_model_reaches_http_body_and_reply_check(self):
+        with local_api(choice_response(model="jev-1.14.0")) as received:
+            answer = route("Fix the Dockerfile image build", CATALOGUE, api_key="fake-test-key", model="jev-1.14.0")
+        self.assertEqual([body["model"] for body in received], ["jev-1.14.0"])
+        self.assertEqual((answer["outcome"], answer["skill_id"], answer["source"], answer["reason"]),
+                         ("route", "container-build", "jev", "model_choice"))
+        with local_api(choice_response(model="jev-1.13.0")):
+            mismatch = route("Fix the Dockerfile image build", CATALOGUE, api_key="fake-test-key", model="jev-1.14.0")
+        self.assertEqual((mismatch["outcome"], mismatch["reason"]), ("review", "api_model_mismatch"))
+
     def test_local_http_uncertainty_missing_usage_and_invalid_schema(self):
         with local_api(choice_response(confidence=0.4, usage=False)):
             uncertain = route("Fix the Dockerfile image build", CATALOGUE, api_key="fake-test-key")
