@@ -42,7 +42,7 @@ class VerificationTests(unittest.TestCase):
             self.assertEqual(run.returncode, 0, run.stderr)
             default = json.loads((evidence / "model-default-report.json").read_text())["provenance"]["settings"]["model"]
             explicit = json.loads((evidence / "model-explicit-report.json").read_text())["provenance"]["settings"]["model"]
-            self.assertEqual((default, explicit), ("jev-latest", "jev-1.14.0"))
+            self.assertEqual((default, explicit), ("jev-preview", "jev-1.14.0"))
             served = json.loads((evidence / "model-default-report.json").read_text())["cases"][0]["decision"]["served_model"]
             self.assertIsNone(served)
             self.assertEqual(json.loads((evidence / "model-invalid.stdout").read_text())["outcome"], "invalid")

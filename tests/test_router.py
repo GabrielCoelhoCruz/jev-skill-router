@@ -160,7 +160,7 @@ class RouterTests(unittest.TestCase):
                 route(request, catalogue, api_key="fake-test-key", model="jev-1.13.0")
                 route(request, catalogue, api_key="fake-test-key")
             self.assertEqual(hashlib.sha256(received.raw[0]).hexdigest(), expected_hash)
-            self.assertEqual(json.loads(received.raw[1]), {**json.loads(received.raw[0]), "model": "jev-latest"})
+            self.assertEqual(json.loads(received.raw[1]), {**json.loads(received.raw[0]), "model": "jev-preview"})
 
     def test_explicit_model_reaches_http_body_and_reply_check(self):
         with local_api(choice_response(model="jev-1.14.0")) as received:
@@ -178,13 +178,14 @@ class RouterTests(unittest.TestCase):
     def test_default_alias_accepts_concrete_resolution_and_keeps_fields_apart(self):
         with local_api(choice_response(model="jev-1.14.0")) as received:
             answer = route("Fix the Dockerfile image build", CATALOGUE, api_key="fake-test-key")
-        self.assertEqual([body["model"] for body in received], ["jev-latest"])
+        self.assertEqual([body["model"] for body in received], ["jev-preview"])
         self.assertEqual((answer["outcome"], answer["skill_id"], answer["reason"], answer["requested_model"], answer["served_model"]),
-                         ("route", "container-build", "model_choice", "jev-latest", "jev-1.14.0"))
-        with local_api(choice_response(model="jev-1.13.0")):
-            preview = route("Fix the Dockerfile image build", CATALOGUE, api_key="fake-test-key", model="jev-preview")
-        self.assertEqual((preview["outcome"], preview["requested_model"], preview["served_model"]),
-                         ("route", "jev-preview", "jev-1.13.0"))
+                         ("route", "container-build", "model_choice", "jev-preview", "jev-1.14.0"))
+        with local_api(choice_response(model="jev-1.13.0")) as received:
+            latest = route("Fix the Dockerfile image build", CATALOGUE, api_key="fake-test-key", model="jev-latest")
+        self.assertEqual([body["model"] for body in received], ["jev-latest"])
+        self.assertEqual((latest["outcome"], latest["requested_model"], latest["served_model"]),
+                         ("route", "jev-latest", "jev-1.13.0"))
 
     def test_reply_without_a_concrete_version_is_never_filled_with_the_alias(self):
         for reported in ("jev-latest", "jev-1.14", "jev-preview", None, 1.14):
@@ -192,17 +193,46 @@ class RouterTests(unittest.TestCase):
                 answer = route("Fix the Dockerfile image build", CATALOGUE, api_key="fake-test-key")
             self.assertEqual((answer["outcome"], answer["source"], answer["reason"], answer["probabilities"],
                               answer["requested_model"], answer["served_model"]),
-                             ("review", "api", "api_model_unresolved", {}, "jev-latest", None))
+                             ("review", "api", "api_model_unresolved", {}, "jev-preview", None))
         missing = choice_response()
         del missing["model"]
         with local_api(missing):
             answer = route("Fix the Dockerfile image build", CATALOGUE, api_key="fake-test-key")
         self.assertEqual((answer["reason"], answer["requested_model"], answer["served_model"]),
-                         ("api_invalid_response", "jev-latest", None))
+                         ("api_invalid_response", "jev-preview", None))
         with patch("urllib.request.build_opener", side_effect=OSError("offline")):
             failed = route("Fix the Dockerfile image build", CATALOGUE, api_key="fake-test-key")
         self.assertEqual((failed["reason"], failed["requested_model"], failed["served_model"]),
-                         ("api_unavailable", "jev-latest", None))
+                         ("api_unavailable", "jev-preview", None))
+
+    def test_model_ids_accept_ascii_digits_only(self):
+        arabic_indic = "jev-\u0661.\u0661\u0663.\u0660"
+        with self.assertRaisesRegex(InputError, "--model must be"):
+            route("Fix the Dockerfile image build", CATALOGUE, dry_run=True, model=arabic_indic)
+        cli = subprocess.run([sys.executable, str(ROOT / "router.py"), "route", "--dry-run", "--model", arabic_indic,
+                              "--request", "Fix the Dockerfile"], cwd=ROOT, capture_output=True, text=True)
+        self.assertEqual((cli.returncode, json.loads(cli.stdout)["outcome"]), (2, "invalid"))
+        with local_api(choice_response(model=arabic_indic)):
+            answer = route("Fix the Dockerfile image build", CATALOGUE, api_key="fake-test-key")
+        self.assertEqual((answer["outcome"], answer["reason"], answer["requested_model"], answer["served_model"]),
+                         ("review", "api_model_unresolved", "jev-preview", None))
+
+    def test_invalid_schema_keeps_the_concrete_version_that_answered(self):
+        broken = choice_response(model="jev-1.13.0")
+        broken["answers"]["route"]["type"] = "noul"
+        no_answers = {"model": "jev-1.14.0", "usage": {"input_tokens": 100, "output_tokens": 20}}
+        for reply, requested, served in ((broken, "jev-1.13.0", "jev-1.13.0"), (broken, "jev-preview", "jev-1.13.0"),
+                                         (no_answers, "jev-preview", "jev-1.14.0")):
+            with self.subTest(requested=requested, served=served), local_api(reply):
+                answer = route("Fix the Dockerfile image build", CATALOGUE, api_key="fake-test-key", model=requested)
+            self.assertEqual((answer["outcome"], answer["source"], answer["reason"], answer["probabilities"],
+                              answer["requested_model"], answer["served_model"]),
+                             ("review", "api", "api_invalid_response", {}, requested, served))
+        with local_api(broken):
+            report = evaluate([{"id": "one", "request": "Fix the Dockerfile image build", "expected": "container-build"}],
+                              CATALOGUE, api_key="fake-test-key")
+        self.assertEqual({key: report["summary"][key] for key in ("served_models", "unknown_served_model", "invalid_responses", "api_failures", "correct")},
+                         {"served_models": {"jev-1.13.0": 1}, "unknown_served_model": 0, "invalid_responses": 1, "api_failures": 0, "correct": 0})
 
     def test_offline_paths_send_no_model_and_report_no_served_model(self):
         with patch("urllib.request.build_opener", side_effect=AssertionError("network used")):
