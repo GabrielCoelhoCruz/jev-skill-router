@@ -1,6 +1,6 @@
 ---
 name: verify-jev-skill-router
-description: Verify Jev skill router CLI help, credential-free routing, lexical dry-run, custom catalogue, pinned model selection, evaluation output, and archived replay. Use after CLI changes or before reporting that these paths work.
+description: Verify Jev skill router CLI help, credential-free routing, lexical dry-run, custom catalogue, default alias and pinned model selection, requested and served model fields, evaluation output, and archived replay. Use after CLI changes or before reporting that these paths work.
 ---
 
 # Verify Jev skill router without a secret

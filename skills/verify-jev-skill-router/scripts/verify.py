@@ -71,8 +71,10 @@ def main():
                 request = "Reduce latency of a slow SELECT"
                 answer = json.loads(run("no-key", ["router.py", "route", "--request", request]))
                 assert (answer["outcome"], answer["reason"], answer["usage"]["requests"]) == ("review", "missing_api_key", 0)
+                assert (answer["requested_model"], answer["served_model"]) == (None, None), "no request was sent, so no model may be reported"
                 answer = json.loads(run("dry-route", ["router.py", "route", "--dry-run", "--request", request], present_key=True))
                 assert (answer["outcome"], answer["skill_id"], answer["source"], answer["usage"]["requests"]) == ("route", "sql-tuning", "lexical", 0)
+                assert (answer["requested_model"], answer["served_model"]) == (None, None), "dry-run must not fabricate a served model"
             if args.feature in ("all", "eval"):
                 dataset = scratch / "one.jsonl"
                 dataset.write_text(json.dumps({"id": "public-example", "request": "Reduce latency of a slow SELECT", "expected": "sql-tuning"}) + "\n")
@@ -97,15 +99,20 @@ def main():
             if args.feature in ("all", "model"):
                 dataset = scratch / "model.jsonl"
                 dataset.write_text(json.dumps({"id": "public-example", "request": "Reduce latency of a slow SELECT", "expected": "sql-tuning"}) + "\n")
-                for name, extra, expected in (("model-default", [], "jev-1.13.0"), ("model-explicit", ["--model", "jev-1.14.0"], "jev-1.14.0")):
+                for name, extra, expected in (("model-default", [], "jev-latest"), ("model-explicit", ["--model", "jev-1.14.0"], "jev-1.14.0")):
                     report = scratch / f"{name}.json"
                     run(name, ["router.py", "eval", "--dry-run", "--dataset", str(dataset), "--output", str(report), *extra], present_key=True)
                     (evidence / f"{name}-report.json").write_bytes(report.read_bytes())
-                    provenance = json.loads(report.read_text())["provenance"]
+                    saved = json.loads(report.read_text())
+                    provenance = saved["provenance"]
                     assert (provenance["settings"]["model"], provenance["source_commit"]) == (expected, commit), f"{name}: inspect {name}-report.json"
-                text = run("model-invalid", ["router.py", "route", "--dry-run", "--model", "jev latest", "--request", "Reduce latency of a slow SELECT"], 2)
-                assert json.loads(text)["outcome"] == "invalid"
-                assert "--model must be a Jev model identifier" in (evidence / "model-invalid.stderr").read_text()
+                    decision = saved["cases"][0]["decision"]
+                    assert (decision["requested_model"], decision["served_model"]) == (None, None), f"{name}: dry-run must not report a served model"
+                    assert (saved["summary"]["served_models"], saved["summary"]["unknown_served_model"]) == ({}, 0), f"{name}: inspect {name}-report.json"
+                for name, value in (("model-invalid", "jev latest"), ("model-partial", "jev-1.14")):
+                    text = run(name, ["router.py", "route", "--dry-run", "--model", value, "--request", "Reduce latency of a slow SELECT"], 2)
+                    assert json.loads(text)["outcome"] == "invalid"
+                    assert "--model must be a pinned Jev version such as jev-1.14.0 or an alias such as jev-latest" in (evidence / f"{name}.stderr").read_text()
             if args.feature in ("all", "replay"):
                 text = run("replay", ["benchmark.py"])
                 assert text.encode() == (repo / "benchmark/summary.json").read_bytes()

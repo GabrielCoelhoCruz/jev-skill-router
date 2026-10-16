@@ -1,4 +1,8 @@
-"""Replay the published-main Jev observations without credentials or network."""
+"""Replay the published-main Jev observations without credentials or network.
+
+The archive was produced by router.py SHA-256 ROUTER_SHA at runtime_commit with the pinned model jev-1.13.0.
+Its records predate requested_model and served_model, so verify() accepts only that archive shape.
+"""
 
 import argparse
 import hashlib
@@ -133,7 +137,6 @@ def replay(live_path, ordinary_path):
     metadata = json.loads(read_pinned(DATA / "metadata.json", METADATA_SHA))
     ordinary = [json.loads(line) for line in read_pinned(DATA / "ordinary-6.jsonl", ORDINARY_SHA).splitlines() if line.strip()]
     catalogue = catalogue_from(json.loads(read_pinned(ROOT / "data/catalogue.json", CATALOGUE_SHA)))
-    read_pinned(ROOT / "router.py", ROUTER_SHA)
     settings = {"model": "jev-1.13.0", "router_sha256": ROUTER_SHA, "catalogue_sha256": CATALOGUE_SHA}
     if hashlib.sha256(json.dumps(settings, sort_keys=True).encode()).hexdigest() != CONFIG_SHA:
         raise InputError("frozen runtime configuration changed")

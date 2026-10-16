@@ -16,10 +16,16 @@ from collections import Counter
 from pathlib import Path
 
 ENDPOINT = "https://api.typesafe.ai/v1/systemone"
-MODEL = "jev-1.13.0"
+MODEL = "jev-latest"
+MODEL_ID = re.compile(r"jev-(?:\d+\.\d+\.\d+|[a-z][a-z0-9-]*)")
+CONCRETE_MODEL = re.compile(r"jev-\d+\.\d+\.\d+")
+INVALID_REPLIES = ("api_invalid_response", "api_model_mismatch", "api_model_unresolved")
 INPUT_USD_PER_MILLION = 0.042
 SENTINELS = ("__no_skill__", "__review__")
 STOP = set("a an the this that these those to of in on for from with and or is are be it its as at by my me i you your please supplied attached existing not do does no into using use their them then than just only can should would could what which how".split())
+
+
+MODEL_RULE = "--model must be a pinned Jev version such as jev-1.14.0 or an alias such as jev-latest"
 
 
 class InputError(ValueError):
@@ -99,7 +105,18 @@ def api_review(reason):
     return decision("__review__", {}, None, "api", reason, 1, None, None)
 
 
+def model_check(requested, reported):
+    """Return (served, failure reason). served is a concrete version the response named, never the alias."""
+    served = reported if isinstance(reported, str) and CONCRETE_MODEL.fullmatch(reported) else None
+    if CONCRETE_MODEL.fullmatch(requested):
+        return served, None if reported == requested else "api_model_mismatch"
+    return served, None if served else "api_model_unresolved"
+
+
 def jev(request, catalogue, api_key, model=MODEL):
+    def sent(outcome, served=None):
+        return {**outcome, "requested_model": model, "served_model": served}
+
     criteria = {s["id"]: s["description"] + " Examples: " + "; ".join(s["examples"]) for s in catalogue}
     criteria["__no_skill__"] = "An ordinary answer needs no specialist workflow."
     criteria["__review__"] = "The goal is ambiguous, several workflows are equally primary, or no listed skill supports this specialist task."
@@ -118,15 +135,16 @@ def jev(request, catalogue, api_key, model=MODEL):
         if len(body) > 1_000_000:
             raise ValueError("oversized response")
         if declared_length is not None and len(body) < int(declared_length):
-            return api_review("api_unavailable")
+            return sent(api_review("api_unavailable"))
         raw = json.loads(body)
         answer = raw["answers"]["route"]
         probabilities = answer["probabilities"]
         choice = answer["choice"]
         confidence = answer["confidence"]
         usage = raw.get("usage")
-        if raw["model"] != model:
-            return api_review("api_model_mismatch")
+        served, failure = model_check(model, raw["model"])
+        if failure:
+            return sent(api_review(failure), served)
         if answer["type"] != "choice" or not isinstance(probabilities, dict) or set(probabilities) != set(criteria):
             raise ValueError("unexpected type or options")
         if not all(type(p) in (int, float) and math.isfinite(p) and 0 <= p <= 1 for p in probabilities.values()) or abs(sum(probabilities.values()) - 1) > 0.02:
@@ -140,25 +158,26 @@ def jev(request, catalogue, api_key, model=MODEL):
         input_tokens = usage["input_tokens"] if usage is not None else None
         output_tokens = usage["output_tokens"] if usage is not None else None
         if choice not in SENTINELS and (confidence < 0.55 or probabilities[choice] < 0.55):
-            return decision("__review__", probabilities, confidence, "jev", "uncertain", 1, input_tokens, output_tokens)
-        return decision(choice, probabilities, confidence, "jev", "model_choice", 1, input_tokens, output_tokens)
+            return sent(decision("__review__", probabilities, confidence, "jev", "uncertain", 1, input_tokens, output_tokens), served)
+        return sent(decision(choice, probabilities, confidence, "jev", "model_choice", 1, input_tokens, output_tokens), served)
     except urllib.error.HTTPError as error:
-        return api_review(f"api_http_{error.code}")
+        return sent(api_review(f"api_http_{error.code}"))
     except (urllib.error.URLError, TimeoutError, OSError, http.client.HTTPException):
-        return api_review("api_unavailable")
+        return sent(api_review("api_unavailable"))
     except (ValueError, KeyError, TypeError, UnicodeError):
-        return api_review("api_invalid_response")
+        return sent(api_review("api_invalid_response"))
 
 
 def route(request, catalogue, *, dry_run=False, api_key=None, model=MODEL):
     validate_request(request)
     catalogue = catalogue_from(catalogue)
-    if not isinstance(model, str) or not re.fullmatch(r"jev-[A-Za-z0-9._-]+", model):
-        raise InputError("--model must be a Jev model identifier")
+    if not isinstance(model, str) or not MODEL_ID.fullmatch(model):
+        raise InputError(MODEL_RULE)
+    unsent = {"requested_model": None, "served_model": None}
     if dry_run:
-        return lexical(request, catalogue, "dry_run")
+        return {**lexical(request, catalogue, "dry_run"), **unsent}
     if not api_key:
-        return decision("__review__", {}, None, "validation", "missing_api_key", 0, 0, 0)
+        return {**decision("__review__", {}, None, "validation", "missing_api_key", 0, 0, 0), **unsent}
     if not isinstance(api_key, str) or any(ord(char) < 33 or ord(char) > 126 for char in api_key):
         raise InputError("TYPESAFE_API_KEY contains invalid characters; set a printable ASCII key")
     return jev(request, catalogue, api_key, model)
@@ -227,8 +246,10 @@ def grade(results, valid_labels, planned):
                          "automatic_route_coverage": {"numerator": predicted_routes, "denominator": len(results)},
                          "route_recall": {"numerator": correct_routes, "denominator": expected_routes},
                          "fallbacks": sum(r["decision"]["source"] == "lexical" for r in results),
-                         "api_failures": sum(r["decision"]["source"] == "api" and r["decision"]["reason"] not in ("api_invalid_response", "api_model_mismatch") for r in results),
-                         "invalid_responses": sum(r["decision"]["reason"] in ("api_invalid_response", "api_model_mismatch") for r in results),
+                         "api_failures": sum(r["decision"]["source"] == "api" and r["decision"]["reason"] not in INVALID_REPLIES for r in results),
+                         "invalid_responses": sum(r["decision"]["reason"] in INVALID_REPLIES for r in results),
+                         "served_models": dict(sorted(Counter(r["decision"]["served_model"] for r in results if r["decision"].get("served_model")).items())),
+                         "unknown_served_model": sum(r["decision"]["usage"]["requests"] > 0 and not r["decision"].get("served_model") for r in results),
                          "missing_credentials": sum(r["decision"]["reason"] == "missing_api_key" for r in results),
                          "api_requests": calls, "known_input_tokens": known_input, "known_output_tokens": known_output,
                          "api_errors_denominator": calls,
@@ -286,7 +307,7 @@ def main(argv=None):
         command = sub.add_parser(name)
         command.add_argument("--catalogue", default="data/catalogue.json")
         command.add_argument("--dry-run", action="store_true", help="force offline lexical baseline; no network")
-        command.add_argument("--model", default=MODEL)
+        command.add_argument("--model", default=MODEL, help="Jev alias or pinned version sent to the API (default: %(default)s)")
         if name == "route":
             command.add_argument("--request", required=True)
         else:
@@ -296,8 +317,8 @@ def main(argv=None):
             command.add_argument("--metadata", help="optional JSON mapping case ids to objects with a family id")
     args = parser.parse_args(argv)
     try:
-        if not re.fullmatch(r"jev-[A-Za-z0-9._-]+", args.model):
-            raise InputError("--model must be a Jev model identifier")
+        if not MODEL_ID.fullmatch(args.model):
+            raise InputError(MODEL_RULE)
         catalogue_bytes = Path(args.catalogue).read_bytes()
         catalogue = catalogue_from(json.loads(catalogue_bytes))
         key = None if args.dry_run else os.environ.get("TYPESAFE_API_KEY")
@@ -342,7 +363,8 @@ def main(argv=None):
             print(json.dumps({"outcome": "invalid", "skill_id": None, "probabilities": {},
                               "confidence": None, "source": "validation", "reason": "invalid_input",
                               "usage": {"requests": 0, "input_tokens": 0, "output_tokens": 0,
-                                        "estimated_input_usd": 0}}))
+                                        "estimated_input_usd": 0},
+                              "requested_model": None, "served_model": None}))
         print(f"Error: {error}. Check --catalogue, --dataset, --request and --output; use --dry-run to avoid network.", file=sys.stderr)
         return 2
 
