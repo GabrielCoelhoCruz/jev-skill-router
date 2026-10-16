@@ -1,6 +1,6 @@
 ---
 name: verify-jev-skill-router
-description: Verify Jev skill router CLI help, credential-free routing, lexical dry-run, custom catalogue, evaluation output, and archived replay. Use after CLI changes or before reporting that these paths work.
+description: Verify Jev skill router CLI help, credential-free routing, lexical dry-run, custom catalogue, pinned model selection, evaluation output, and archived replay. Use after CLI changes or before reporting that these paths work.
 ---
 
 # Verify Jev skill router without a secret
@@ -20,7 +20,8 @@ python3 "$SKILL/scripts/verify.py" --repo "$PWD" --evidence "$HOME/.capy/work/je
 
 ## Doctor
 
-The command above prints `"ready": true`, the Python version, and the runtime SHA-256.
+The command above prints `"ready": true`, the Python version, the runtime SHA-256, the checkout `head`, and `dirty`.
+Compare `head` with the commit you were asked to verify. A dirty checkout proves only its working tree.
 It reads files without calling an API or creating the evidence directory.
 If it fails, correct `--repo` or use Python 3.11+ before driving the CLI.
 
@@ -37,8 +38,9 @@ python3 "$SKILL/scripts/verify.py" --repo "$PWD" --evidence "$HOME/.capy/work/je
 Expect `"verified": "route"`, `"live_requests": 0`, and `"cleanup": "scratch removed; evidence retained"`.
 The real CLI must return review with `missing_api_key` and zero requests without a key.
 Dry-run must return `route`, `sql-tuning`, `lexical`, and zero requests for the public SELECT example.
-Use `--feature all` to drive the five entries in [features/README.md](features/README.md).
+Use `--feature all` to drive the six entries in [features/README.md](features/README.md).
 This skill has no live-API option. A live measurement needs its own approved protocol and budget.
+The map lists the paths this helper does not test. Report them as NOT TESTED.
 
 ## Evidence
 
@@ -55,6 +57,6 @@ Check that `after-cleanup.json` names the surviving proof files after a successf
 
 ## Helpers
 
-`scripts/verify.py` accepts `--feature help`, `route`, `eval`, `catalogue`, `replay`, or `all`.
+`scripts/verify.py` accepts `--feature help`, `route`, `eval`, `catalogue`, `model`, `replay`, or `all`.
 Run the command above with the feature from the map. Use `--doctor` for a read-only check.
 Use the `maintain-verification-skill` workflow when the CLI changes to keep this map current.

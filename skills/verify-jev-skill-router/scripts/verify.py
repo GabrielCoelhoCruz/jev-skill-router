@@ -13,7 +13,7 @@ def main():
     parser = argparse.ArgumentParser(description="Verify the real router CLI without a secret or network")
     parser.add_argument("--repo", type=Path, required=True)
     parser.add_argument("--evidence", type=Path, required=True)
-    parser.add_argument("--feature", choices=("help", "route", "eval", "catalogue", "replay", "all"), default="all")
+    parser.add_argument("--feature", choices=("help", "route", "eval", "catalogue", "model", "replay", "all"), default="all")
     parser.add_argument("--doctor", action="store_true")
     args = parser.parse_args()
     repo = args.repo.resolve()
@@ -23,8 +23,12 @@ def main():
     if sys.version_info < (3, 11):
         parser.error("use Python 3.11 or newer")
     source = hashlib.sha256((repo / "router.py").read_bytes()).hexdigest()
+    head = subprocess.run(["git", "rev-parse", "HEAD"], cwd=repo, capture_output=True, text=True)
+    dirty = subprocess.run(["git", "status", "--porcelain", "--untracked-files=no"], cwd=repo, capture_output=True, text=True)
+    commit = head.stdout.strip() if head.returncode == 0 else None
     if args.doctor:
-        print(json.dumps({"ready": True, "python": sys.version.split()[0], "router_sha256": source}))
+        print(json.dumps({"ready": True, "python": sys.version.split()[0], "router_sha256": source,
+                          "head": commit, "dirty": bool(dirty.stdout.strip()) if dirty.returncode == 0 else None}))
         return 0
     evidence = args.evidence.resolve()
     evidence.mkdir(parents=True, exist_ok=False)
@@ -90,6 +94,18 @@ def main():
                 catalogue.write_text("[]")
                 text = run("invalid-catalogue", ["router.py", "route", "--dry-run", "--catalogue", str(catalogue), "--request", "Fix a Docker multi-stage build"], 2)
                 assert json.loads(text)["outcome"] == "invalid"
+            if args.feature in ("all", "model"):
+                dataset = scratch / "model.jsonl"
+                dataset.write_text(json.dumps({"id": "public-example", "request": "Reduce latency of a slow SELECT", "expected": "sql-tuning"}) + "\n")
+                for name, extra, expected in (("model-default", [], "jev-1.13.0"), ("model-explicit", ["--model", "jev-1.14.0"], "jev-1.14.0")):
+                    report = scratch / f"{name}.json"
+                    run(name, ["router.py", "eval", "--dry-run", "--dataset", str(dataset), "--output", str(report), *extra], present_key=True)
+                    (evidence / f"{name}-report.json").write_bytes(report.read_bytes())
+                    provenance = json.loads(report.read_text())["provenance"]
+                    assert (provenance["settings"]["model"], provenance["source_commit"]) == (expected, commit), f"{name}: inspect {name}-report.json"
+                text = run("model-invalid", ["router.py", "route", "--dry-run", "--model", "jev latest", "--request", "Reduce latency of a slow SELECT"], 2)
+                assert json.loads(text)["outcome"] == "invalid"
+                assert "--model must be a Jev model identifier" in (evidence / "model-invalid.stderr").read_text()
             if args.feature in ("all", "replay"):
                 text = run("replay", ["benchmark.py"])
                 assert text.encode() == (repo / "benchmark/summary.json").read_bytes()
